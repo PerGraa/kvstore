@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <vector>
 
+namespace kvstore {
+
 template <size_t MAX_SIZE>
 class FIFOCache : public Store<FIFOCache<MAX_SIZE>> {
   using vectorPair = std::vector<std::pair<std::string, std::string>>;
@@ -81,5 +83,6 @@ class FIFOCache : public Store<FIFOCache<MAX_SIZE>> {
   vectorPair m_vector;
   size_t m_current_size = 0;
 };
+}  // namespace kvstore
 
 #endif  // FIFO_CACHE_HPP

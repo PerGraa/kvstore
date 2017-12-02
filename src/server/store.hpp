@@ -4,8 +4,7 @@
 #include <mutex>
 #include <string>
 
-// TODO(graa):
-// namespace caches {
+namespace kvstore {
 
 template <typename CacheType>
 class Store {
@@ -76,5 +75,6 @@ class Store {
   // TODO(graa):
   // using range = std::pair<float, float>;
 };
+}  // namespace kvstore
 
 #endif  // STORE_HPP

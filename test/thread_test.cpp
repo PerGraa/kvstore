@@ -5,6 +5,7 @@
 
 #include "server/full_cache.hpp"
 
+using namespace kvstore;
 using std::to_string;
 
 TEST(thread, ten) {

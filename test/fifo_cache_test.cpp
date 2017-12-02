@@ -2,6 +2,7 @@
 
 #include "server/fifo_cache.hpp"
 
+using namespace kvstore;
 using std::to_string;
 
 TEST(fifo_cache, simple) {

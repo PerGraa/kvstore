@@ -2,6 +2,7 @@
 
 #include "server/lru_cache.hpp"
 
+using namespace kvstore;
 using std::to_string;
 
 TEST(lru_cache, simple) {

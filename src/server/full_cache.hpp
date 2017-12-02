@@ -4,6 +4,8 @@
 #include "store.hpp"
 #include <unordered_map>
 
+namespace kvstore {
+
 class FullCache : public Store<FullCache> {
  public:
   bool put_impl(const std::string &key, const std::string &value) override {
@@ -30,5 +32,6 @@ class FullCache : public Store<FullCache> {
  private:
   std::unordered_map<std::string, std::string> m_map;
 };
+}  // namespace kvstore
 
 #endif  // FULL_CACHE_HPP

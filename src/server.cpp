@@ -6,19 +6,9 @@
 #include "server/store_endpoint.hpp"
 
 int main() {
-  Pistache::Port server_port(8888);
-  Pistache::Address server_address(Pistache::Ipv4::any(), server_port);
-
-  // According to standard: hardware_concurrency() may return 0
-  uint number_of_threads = std::max(2u, std::thread::hardware_concurrency());
-
-  StoreEndpoint<FullCache> store_endpoint(server_address);
-
-  store_endpoint.init(number_of_threads);
-  std::cout << "server starting using " << number_of_threads << " threads\n";
-  store_endpoint.start();
-
-  store_endpoint.shutdown();
+  // This call will not return in the normal case.
+  // Kill server with Ctrl+C in terminal.
+  kvstore::start_rest_server<kvstore::FullCache>();
 
   return EXIT_SUCCESS;
 }

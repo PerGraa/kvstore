@@ -2,6 +2,7 @@
 
 #include "server/full_cache.hpp"
 
+using namespace kvstore;
 using std::to_string;
 
 TEST(full_cache, simple) {

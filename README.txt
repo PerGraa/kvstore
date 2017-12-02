@@ -19,6 +19,11 @@ Build:
 Run unit tests:
 kvstore/build$ ./unittest
 
+TODO
+Run server
+- To stop/kill server, press Ctrl+C in terminal.
+kvstore/build$ ./unittest
+
 
 
 ===================================================
