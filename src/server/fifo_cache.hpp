@@ -1,16 +1,16 @@
 #ifndef FIFO_CACHE_HPP
 #define FIFO_CACHE_HPP
 
-#include "cache.hpp"
+#include "store.hpp"
 #include <algorithm>
 #include <vector>
 
 template <size_t MAX_SIZE>
-class FIFOCache : public Cache {
+class FIFOCache : public Store<FIFOCache<MAX_SIZE>> {
   using vectorPair = std::vector<std::pair<std::string, std::string>>;
 
  public:
-  bool insert(const std::string &key, const std::string &value) override {
+  bool put_impl(const std::string &key, const std::string &value) override {
     if (key.length() + value.length() > MAX_SIZE) {
       // Do not bother if there will never be space for given key/value
       return false;
@@ -38,13 +38,13 @@ class FIFOCache : public Cache {
       if (m_vector.begin()->first == key) {
         was_inserted = false;
       }
-      erase(m_vector.begin()->first);
+      delete_impl(m_vector.begin()->first);
     }
 
     return was_inserted;
   }
 
-  const std::pair<bool, std::string> retrieve(const std::string &key) override {
+  const std::pair<bool, std::string> get_impl(const std::string &key) override {
     auto it = find_by_key(key);
 
     if (it != m_vector.end()) {
@@ -54,7 +54,7 @@ class FIFOCache : public Cache {
     return {false, key};
   }
 
-  bool erase(const std::string &key) override {
+  bool delete_impl(const std::string &key) override {
     auto it = find_by_key(key);
 
     if (it != m_vector.end()) {
@@ -68,7 +68,7 @@ class FIFOCache : public Cache {
     return false;
   }
 
-  size_t size() override { return m_vector.size(); }
+  size_t size_impl() override { return m_vector.size(); }
 
  private:
   vectorPair::iterator find_by_key(const std::string &key) {

@@ -1,12 +1,11 @@
 #include "gtest_include.hpp"
 
 #include "server/fifo_cache.hpp"
-#include "server/store.hpp"
 
 using std::to_string;
 
 TEST(fifo_cache, simple) {
-  Store<FIFOCache<20>> s;
+  FIFOCache<20> s;
 
   auto r = s.get("foo");
   EXPECT_FALSE(r.first);
@@ -32,7 +31,7 @@ TEST(fifo_cache, simple) {
 }
 
 TEST(fifo_cache, many) {
-  Store<FIFOCache<55000>> s;
+  FIFOCache<55000> s;
   constexpr int MAX = 4000;
 
   for (int i = 0; i < MAX; ++i) {
@@ -53,7 +52,7 @@ TEST(fifo_cache, many) {
 }
 
 TEST(fifo_cache, too_many) {
-  Store<FIFOCache<20>> s;
+  FIFOCache<20> s;
 
   EXPECT_TRUE(s.put("key1", "val1"));
   EXPECT_TRUE(s.put("key2", "val2"));
@@ -70,7 +69,7 @@ TEST(fifo_cache, too_many) {
 }
 
 TEST(fifo_cache, too_many_fifo) {
-  Store<FIFOCache<40>> s;
+  FIFOCache<40> s;
 
   EXPECT_TRUE(s.put("key1", "val1"));
   EXPECT_TRUE(s.put("key2", "val2"));
@@ -108,7 +107,7 @@ TEST(fifo_cache, too_many_fifo) {
 }
 
 TEST(fifo_cache, way_too_many) {
-  Store<FIFOCache<12>> s;
+  FIFOCache<12> s;
   constexpr int MAX = 999;
 
   EXPECT_FALSE(s.put("0123456789", "0123456789"));

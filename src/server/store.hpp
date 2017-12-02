@@ -1,41 +1,45 @@
 #ifndef STORE_HPP
 #define STORE_HPP
 
-#include "cache.hpp"
 #include <mutex>
 #include <string>
 
 // TODO(graa):
 // namespace caches {
 
-template <typename Cache>
+template <typename CacheType>
 class Store {
+  using Lock  = std::mutex;
+  using Guard = std::lock_guard<Lock>;
+
  public:
   // Add/update a key-value pair in the store.
   // Key must not be empty string.
   // Value may be empty string.
   // Return: True if a key/value was inserted
   bool put(const std::string &key, const std::string &value) {
-    std::lock_guard<std::mutex> guard(m_mutex);
+    Guard guard(m_store_lock);
 
+    // Empty key not allowed.
     if (key.empty()) {
       return false;
     }
 
-    return m_cache.insert(key, value);
+    return static_cast<CacheType *>(this)->put_impl(key, value);
   }
 
   // Delete a pair from the store by key
   // Return: True if key/value was present before deletion.
   //         False if key was not found.
   bool del(const std::string &key) {
-    std::lock_guard<std::mutex> guard(m_mutex);
+    Guard guard(m_store_lock);
 
+    // Empty key not allowed.
     if (key.empty()) {
       return false;
     }
 
-    return m_cache.erase(key);
+    return static_cast<CacheType *>(this)->delete_impl(key);
   }
 
   // Get a pair from the store by key
@@ -44,31 +48,33 @@ class Store {
   //   string: Value if key was found.
   //           Undefined value if key was not found.
   const std::pair<bool, std::string> get(const std::string &key) {
-    std::lock_guard<std::mutex> guard(m_mutex);
+    Guard guard(m_store_lock);
 
+    // Empty key not allowed.
     if (key.empty()) {
       return {false, ""};
     }
 
-    return m_cache.retrieve(key);
+    return static_cast<CacheType *>(this)->get_impl(key);
   }
 
   // Current number of key/value pairs in store
   size_t size() {
-    std::lock_guard<std::mutex> guard(m_mutex);
+    Guard guard(m_store_lock);
 
-    return m_cache.size();
+    return static_cast<CacheType *>(this)->size_impl();
   }
 
  private:
-  Cache m_cache;
-  std::mutex m_mutex;
+  virtual bool put_impl(const std::string &key, const std::string &value) = 0;
+  virtual bool delete_impl(const std::string &key) = 0;
+  virtual const std::pair<bool, std::string> get_impl(const std::string &key) = 0;
+  virtual size_t size_impl() = 0;
+
+  Lock m_store_lock;
 
   // TODO(graa):
   // using range = std::pair<float, float>;
-  //  typedef std::mutex Lock;
-  //  typedef std::lock_guard<Lock> Guard;
-  //  Lock metricsLock;
 };
 
 #endif  // STORE_HPP

@@ -27,43 +27,43 @@
 #pragma GCC diagnostic pop
 #pragma GCC diagnostic pop
 
-template <typename Store>
+template <typename StoreType>
 class StoreEndpoint {
   using Request        = Pistache::Rest::Request;
   using ResponseWriter = Pistache::Http::ResponseWriter;
 
  public:
   explicit StoreEndpoint(Pistache::Address addr)
-      : httpEndpoint(std::make_shared<Pistache::Http::Endpoint>(addr)) {}
+      : m_httpEndpoint(std::make_shared<Pistache::Http::Endpoint>(addr)) {}
 
   void init(size_t thr = 2) {
     auto opts = Pistache::Http::Endpoint::options().threads(thr);
-    httpEndpoint->init(opts);
+    m_httpEndpoint->init(opts);
     setupRoutes();
   }
 
   void start() {
-    httpEndpoint->setHandler(router.handler());
-    httpEndpoint->serve();
+    m_httpEndpoint->setHandler(m_router.handler());
+    m_httpEndpoint->serve();
   }
 
-  void shutdown() { httpEndpoint->shutdown(); }
+  void shutdown() { m_httpEndpoint->shutdown(); }
 
  private:
   void setupRoutes() {
     using namespace Pistache::Rest::Routes;  // NOLINT
 
-    Put(router, "/key/:key/value/:value", bind(&StoreEndpoint::doPut, this));
-    Delete(router, "/key/:key", bind(&StoreEndpoint::doDelete, this));
-    Get(router, "/key/:key", bind(&StoreEndpoint::doGet, this));
-    Get(router, "/size", bind(&StoreEndpoint::doSize, this));
+    Put(m_router, "/key/:key/value/:value", bind(&StoreEndpoint::doPut, this));
+    Delete(m_router, "/key/:key", bind(&StoreEndpoint::doDelete, this));
+    Get(m_router, "/key/:key", bind(&StoreEndpoint::doGet, this));
+    Get(m_router, "/size", bind(&StoreEndpoint::doSize, this));
   }
 
   void doPut(const Request& request, ResponseWriter response) {
     auto key   = request.param(":key").as<std::string>();
     auto value = request.param(":value").as<std::string>();
 
-    if (store.put(key, value)) {
+    if (m_store.put(key, value)) {
       response.send(Pistache::Http::Code::Ok,
                     "PUT: Saved key[" + key + "] with value[" + value + "]\n");
     } else {
@@ -75,7 +75,7 @@ class StoreEndpoint {
   void doDelete(const Request& request, ResponseWriter response) {
     auto key = request.param(":key").as<std::string>();
 
-    if (store.del(key)) {
+    if (m_store.del(key)) {
       response.send(Pistache::Http::Code::Ok,
                     "DEL: Key[" + key + "] found and deleted\n");
     } else {
@@ -88,7 +88,7 @@ class StoreEndpoint {
 
     bool result;
     std::string value;
-    std::tie(result, value) = store.get(key);
+    std::tie(result, value) = m_store.get(key);
 
     if (result) {
       response.send(Pistache::Http::Code::Ok,
@@ -101,12 +101,12 @@ class StoreEndpoint {
 
   void doSize(const Request& /*unused*/, ResponseWriter response) {
     response.send(Pistache::Http::Code::Ok,
-                  "GET: Current store size[" + std::to_string(store.size()) + "]\n");
+                  "GET: Current store size[" + std::to_string(m_store.size()) + "]\n");
   }
 
-  std::shared_ptr<Pistache::Http::Endpoint> httpEndpoint;
-  Pistache::Rest::Router router;
-  Store store;
+  std::shared_ptr<Pistache::Http::Endpoint> m_httpEndpoint;
+  Pistache::Rest::Router m_router;
+  StoreType m_store;
 };
 
 #endif  // STORE_ENDPOINT_HPP

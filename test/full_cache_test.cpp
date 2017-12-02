@@ -1,53 +1,52 @@
 #include "gtest_include.hpp"
 
 #include "server/full_cache.hpp"
-#include "server/store.hpp"
 
 using std::to_string;
 
 TEST(full_cache, simple) {
-  Store<FullCache> s;
+  FullCache c;
 
-  auto r = s.get("foo");
+  auto r = c.get("foo");
   EXPECT_FALSE(r.first);
 
-  EXPECT_TRUE(s.put("key1", "val0"));
-  EXPECT_TRUE(s.put("key1", "val1"));
+  EXPECT_TRUE(c.put("key1", "val0"));
+  EXPECT_TRUE(c.put("key1", "val1"));
 
-  r = s.get("key1");
+  r = c.get("key1");
   EXPECT_TRUE(r.first);
   EXPECT_EQ(r.second, "val1");
 
-  r = s.get("key2");
+  r = c.get("key2");
   EXPECT_FALSE(r.first);
 
-  EXPECT_TRUE(s.put("key2", "val2"));
-  r = s.get("key2");
+  EXPECT_TRUE(c.put("key2", "val2"));
+  r = c.get("key2");
   EXPECT_TRUE(r.first);
   EXPECT_EQ(r.second, "val2");
 
-  EXPECT_TRUE(s.del("key1"));
-  r = s.get("key1");
+  EXPECT_TRUE(c.del("key1"));
+  r = c.get("key1");
   EXPECT_FALSE(r.first);
 }
 
 TEST(full_cache, many) {
-  Store<FullCache> s;
+  FullCache c;
   constexpr int MAX = 100000;
 
   for (int i = 0; i < MAX; ++i) {
-    EXPECT_TRUE(s.put("key" + to_string(i), "val" + to_string(i)));
+    EXPECT_TRUE(c.put("key" + to_string(i), "val" + to_string(i)));
   }
 
   for (int i = 0; i < MAX; ++i) {
-    auto r = s.get("key" + to_string(i));
+    auto r = c.get("key" + to_string(i));
     EXPECT_TRUE(r.first);
 
     EXPECT_EQ(r.second, "val" + to_string(i));
 
-    EXPECT_TRUE(s.del("key" + to_string(i)));
-    r = s.get("key" + to_string(i));
+    EXPECT_TRUE(c.del("key" + to_string(i)));
+    r = c.get("key" + to_string(i));
     EXPECT_FALSE(r.first);
-    EXPECT_FALSE(s.del("key" + to_string(i)));
+    EXPECT_FALSE(c.del("key" + to_string(i)));
   }
 }

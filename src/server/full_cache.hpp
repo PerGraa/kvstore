@@ -1,12 +1,12 @@
 #ifndef FULL_CACHE_HPP
 #define FULL_CACHE_HPP
 
-#include "cache.hpp"
+#include "store.hpp"
 #include <unordered_map>
 
-class FullCache : public Cache {
+class FullCache : public Store<FullCache> {
  public:
-  bool insert(const std::string &key, const std::string &value) override {
+  bool put_impl(const std::string &key, const std::string &value) override {
     auto p = m_map.insert({key, value});
     if (!p.second) {
       // Node exist, overwrite previous value
@@ -15,7 +15,7 @@ class FullCache : public Cache {
     return true;
   }
 
-  const std::pair<bool, std::string> retrieve(const std::string &key) override {
+  const std::pair<bool, std::string> get_impl(const std::string &key) override {
     try {
       return {true, m_map.at(key)};
     } catch (const std::out_of_range &) {
@@ -23,9 +23,9 @@ class FullCache : public Cache {
     }
   }
 
-  bool erase(const std::string &key) override { return (m_map.erase(key) > 0); }
+  bool delete_impl(const std::string &key) override { return (m_map.erase(key) > 0); }
 
-  size_t size() override { return m_map.size(); }
+  size_t size_impl() override { return m_map.size(); }
 
  private:
   std::unordered_map<std::string, std::string> m_map;
