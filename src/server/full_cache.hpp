@@ -6,6 +6,7 @@
 
 namespace kvstore {
 
+// The trivial cache which just stores everything.
 class FullCache : public Store<FullCache> {
  public:
   bool put_impl(const std::string &key, const std::string &value) override {

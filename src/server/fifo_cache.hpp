@@ -7,10 +7,11 @@
 
 namespace kvstore {
 
+// For simulation purposes, pretend that number of chars/bytes saved
+// in the cache is equal to the actual memory use by the data
+// structure.
 template <size_t MAX_SIZE>
 class FIFOCache : public Store<FIFOCache<MAX_SIZE>> {
-  using vectorPair = std::vector<std::pair<std::string, std::string>>;
-
  public:
   bool put_impl(const std::string &key, const std::string &value) override {
     if (key.length() + value.length() > MAX_SIZE) {
@@ -73,14 +74,16 @@ class FIFOCache : public Store<FIFOCache<MAX_SIZE>> {
   size_t size_impl() override { return m_vector.size(); }
 
  private:
-  vectorPair::iterator find_by_key(const std::string &key) {
+  using vectorOfPair = std::vector<std::pair<std::string, std::string>>;
+
+  vectorOfPair::iterator find_by_key(const std::string &key) {
     return std::find_if(m_vector.begin(), m_vector.end(),
-                        [&key](const std::pair<std::string, std::string> &e) {
+                        [&key](const auto &e) {
                           return e.first == key;
                         });
   }
 
-  vectorPair m_vector;
+  vectorOfPair m_vector;
   size_t m_current_size = 0;
 };
 }  // namespace kvstore

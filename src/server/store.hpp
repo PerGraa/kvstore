@@ -6,6 +6,10 @@
 
 namespace kvstore {
 
+// The base store/cache class, handle all synchronized store access in
+// this class.
+// Use Curiously Recurring Template Pattern (CRTP) in derived classes
+// for providing compile-time polymorphism.
 template <typename CacheType>
 class Store {
   using Lock  = std::mutex;
@@ -71,9 +75,6 @@ class Store {
   virtual size_t size_impl() = 0;
 
   Lock m_store_lock;
-
-  // TODO(graa):
-  // using range = std::pair<float, float>;
 };
 }  // namespace kvstore
 
