@@ -1,35 +1,12 @@
 #ifndef STORE_ENDPOINT_HPP
 #define STORE_ENDPOINT_HPP
 
-// Silence GCC compiler warnings from Pistache library
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wreorder"
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wignored-qualifiers"
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wshadow"
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
-#include "pistache/endpoint.h"
-#include "pistache/http.h"
-#include "pistache/router.h"
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
+#include "pistache_include.hpp"
 
 namespace kvstore {
 
-template <typename StoreType>
+// A REST HTTP server as provided by the Pistache library.
+template <typename StoreType, typename StoreResponseType>
 class StoreEndpoint {
   using Request        = Pistache::Rest::Request;
   using ResponseWriter = Pistache::Http::ResponseWriter;
@@ -65,24 +42,13 @@ class StoreEndpoint {
     auto key   = request.param(":key").as<std::string>();
     auto value = request.param(":value").as<std::string>();
 
-    if (m_store.put(key, value)) {
-      response.send(Pistache::Http::Code::Ok,
-                    "PUT: Saved key[" + key + "] with value[" + value + "]\n");
-    } else {
-      response.send(Pistache::Http::Code::Internal_Server_Error,
-                    "PUT: Could not save key[" + key + "] with value[" + value + "]\n");
-    }
+    m_writer.put_response(response, key, value, m_store.put(key, value));
   }
 
   void do_delete(const Request& request, ResponseWriter response) {
     auto key = request.param(":key").as<std::string>();
 
-    if (m_store.del(key)) {
-      response.send(Pistache::Http::Code::Ok,
-                    "DEL: Key[" + key + "] found and deleted\n");
-    } else {
-      response.send(Pistache::Http::Code::Ok, "DEL: Key[" + key + "] not found\n");
-    }
+    m_writer.delete_response(response, key, m_store.del(key));
   }
 
   void do_get(const Request& request, ResponseWriter response) {
@@ -92,35 +58,29 @@ class StoreEndpoint {
     std::string value;
     std::tie(result, value) = m_store.get(key);
 
-    if (result) {
-      response.send(Pistache::Http::Code::Ok,
-                    "GET: Found key[" + key + "] with value[" + value + "]\n");
-    } else {
-      response.send(Pistache::Http::Code::Not_Found,
-                    "GET: Did not find key[" + key + "]\n");
-    }
+    m_writer.get_response(response, key, value, result);
   }
 
   void do_size(const Request& /*unused*/, ResponseWriter response) {
-    response.send(Pistache::Http::Code::Ok,
-                  "GET: Current store size[" + std::to_string(m_store.size()) + "]\n");
+    m_writer.size_response(response, m_store.size());
   }
 
   std::shared_ptr<Pistache::Http::Endpoint> m_http_endpoint;
   Pistache::Rest::Router m_router;
   StoreType m_store;
+  StoreResponseType m_writer;
 };
 
 // This function will not return in the normal case.
 // Kill server with Ctrl+C in terminal.
-template <typename Store>
+template <typename StoreType, typename StoreResponseType>
 void start_rest_server() {
   Pistache::Address server_address(Pistache::Ipv4::any(), 8888);
 
   // According to standard: hardware_concurrency() may return 0
   uint number_of_threads = std::max(2u, std::thread::hardware_concurrency());
 
-  StoreEndpoint<Store> store_endpoint(server_address);
+  StoreEndpoint<StoreType, StoreResponseType> store_endpoint(server_address);
   store_endpoint.init(number_of_threads);
 
   std::cout << "REST server starting at address:port [" << server_address.host() << ':'

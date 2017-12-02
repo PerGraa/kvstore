@@ -3,15 +3,16 @@
 
 #include <mutex>
 #include <string>
+#include <unordered_map>
 
 namespace kvstore {
 
-// The base store/cache class, handle all synchronized store access in
-// this class.
-// Use Curiously Recurring Template Pattern (CRTP) in derived classes
-// for providing compile-time polymorphism.
+// Store ABC with pure virtual functions.
+// Handle all synchronized store access in this class.
+// Use Curiously Recurring Template Pattern (CRTP) in derived
+// classes for providing compile-time polymorphism.
 template <typename CacheType>
-class Store {
+class StoreBase {
   using Lock  = std::mutex;
   using Guard = std::lock_guard<Lock>;
 
@@ -76,6 +77,35 @@ class Store {
 
   Lock m_store_lock;
 };
+
+// The basic store which just stores everything.
+class Store : public StoreBase<Store> {
+ public:
+  bool put_impl(const std::string &key, const std::string &value) override {
+    auto p = m_map.insert({key, value});
+    if (!p.second) {
+      // Node exist, overwrite previous value
+      p.first->second = value;
+    }
+    return true;
+  }
+
+  bool delete_impl(const std::string &key) override { return (m_map.erase(key) > 0); }
+
+  const std::pair<bool, std::string> get_impl(const std::string &key) override {
+    try {
+      return {true, m_map.at(key)};
+    } catch (const std::out_of_range &) {
+      return {false, key};
+    }
+  }
+
+  size_t size_impl() override { return m_map.size(); }
+
+ private:
+  std::unordered_map<std::string, std::string> m_map;
+};
+
 }  // namespace kvstore
 
 #endif  // STORE_HPP

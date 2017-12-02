@@ -7,12 +7,14 @@
 
 namespace kvstore {
 
-// For simulation purposes, pretend that number of chars/bytes saved
-// in the cache is equal to the actual memory use by the data
-// structure.
+// A FIFO cache.
+// For simulation purposes, pretend that the up to MAX_SIZE number of
+// chars/bytes saved in the cache is equal to the actual memory use by
+// the data structure.
 template <size_t MAX_SIZE>
-class FIFOCache : public Store<FIFOCache<MAX_SIZE>> {
+class FIFOCache : public StoreBase<FIFOCache<MAX_SIZE>> {
  public:
+  // Updating an existing value will *not* move position in queue.
   bool put_impl(const std::string &key, const std::string &value) override {
     if (key.length() + value.length() > MAX_SIZE) {
       // Do not bother if there will never be space for given key/value
@@ -78,9 +80,7 @@ class FIFOCache : public Store<FIFOCache<MAX_SIZE>> {
 
   vectorOfPair::iterator find_by_key(const std::string &key) {
     return std::find_if(m_vector.begin(), m_vector.end(),
-                        [&key](const auto &e) {
-                          return e.first == key;
-                        });
+                        [&key](const auto &e) { return e.first == key; });
   }
 
   vectorOfPair m_vector;

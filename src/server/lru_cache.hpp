@@ -7,11 +7,12 @@
 
 namespace kvstore {
 
+// A LRU cache.
 // For simulation purposes, pretend that number of chars/bytes saved
 // in the cache is equal to the actual memory use by the data
 // structure.
 template <size_t MAX_SIZE>
-class LRUCache : public Store<LRUCache<MAX_SIZE>> {
+class LRUCache : public StoreBase<LRUCache<MAX_SIZE>> {
  public:
   bool put_impl(const std::string &key, const std::string &value) override {
     if (key.length() + value.length() > MAX_SIZE) {
@@ -78,9 +79,7 @@ class LRUCache : public Store<LRUCache<MAX_SIZE>> {
 
   vectorOfPair::iterator find_by_key(const std::string &key) {
     return std::find_if(m_vector.begin(), m_vector.end(),
-                        [&key](const auto &e) {
-                          return e.first == key;
-                        });
+                        [&key](const auto &e) { return e.first == key; });
   }
 
   vectorOfPair m_vector;
