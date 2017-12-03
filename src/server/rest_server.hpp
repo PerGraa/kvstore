@@ -43,8 +43,8 @@ void start_rest_server() {
     return m_writer.size_response(m_store.size());
   });
 
-  app.loglevel(crow::LogLevel::Debug);  // TODO(graa): 
-  app.debug_print();                    // TODO(graa): 
+  app.loglevel(crow::LogLevel::Debug);  // TODO(graa):
+  app.debug_print();                    // TODO(graa):
                                         // app.loglevel(crow::LogLevel::Warning); //TODO
 
   // According to standard: hardware_concurrency() may return 0
