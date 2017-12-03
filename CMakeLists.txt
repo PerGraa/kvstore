@@ -52,7 +52,6 @@ add_custom_target(
   ${KVSTORE_SOURCES}
   ${TEST_SOURCES}
   -I ${PROJECT_SOURCE_DIR}/src/
-  -I ${PROJECT_SOURCE_DIR}/3rdparty/
 )
 
 ## clang-tidy
