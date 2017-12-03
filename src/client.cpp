@@ -1,3 +1,8 @@
+#include <mutex>
+#include <vector>
+#include <chrono>
+#include <thread>
+
 // Silence Clang compiler warnings
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wold-style-cast"
@@ -9,35 +14,103 @@
 
 #pragma clang diagnostic pop
 
-int main() {
+/** Thread safe cout class
+  * Exemple of use:
+  *    PrintThread{} << "Hello world!" << std::endl;
+  */
+class PrintThread: public std::ostringstream
+{
+public:
+    PrintThread() = default;
+
+    ~PrintThread()
+    {
+        std::lock_guard<std::mutex> guard(_mutexPrint);
+        std::cout << this->str();
+    }
+
+private:
+    static std::mutex _mutexPrint;
+};
+
+std::mutex PrintThread::_mutexPrint{};
+
+
+void send_request(int thread_id, int number_of_messages, std::chrono::milliseconds millisecs) {
   UrlRequest request;
   request.host("0.0.0.0");
   request.port(8888);
-  //  request.host("google.com");
-  request.timeout = {1, 0};  // 1 second timeout
-  request.uri("/size");
 
-  request.addHeader("Accept: */*");
-  //  request.addHeader("Connection: keep-alive");
-  auto response = request.perform();
-  cout << "status code = " << response.statusCode() << ", body = *" << response.body()
-       << "*" << endl;
+  // 1 second timeout
+  request.timeout = {1, 0};
 
-  return 0;
+  std::random_device random_device;
+  std::mt19937 engine{random_device()};
+  std::uniform_int_distribution<int> dist(1, 20);
+  std::uniform_real_distribution<> dist_real(0.75, 1.25);
 
-  UrlRequest request1;
-  request1.host("http://google.com");  //.port(8888);
-                                       //  request.uri("/size");
+  for (int i = 0; i < number_of_messages; ++i) {
+    switch (dist(engine) % 4) {
+    case 0: {
+      request.method("PUT");
+      request.uri("/put/key/" + std::to_string(dist(engine) % 10) + "/value/" 
+                  + std::to_string(i) + "_thread" + std::to_string(thread_id));
+    }
+      break;
+    case 1: {
+      request.method("DELETE");
+      request.uri("/delete/key/" + std::to_string(dist(engine) % 10));
+    }
+      break;
+    case 2: {
+      request.method("GET");
+      request.uri("/get/key/" + std::to_string(dist(engine) % 10));
+    }
+      break;
+    case 3: {
+      request.method("GET");
+      request.uri("/size");
+    }
+      break;
 
-  request1.method("GET");
+    default: {
+    }
+      break;
+    }
 
-  //  request.perform();
-  auto response1 = request1.perform();
-  /*  auto response = std::move(request.perform());
+    auto response = request.perform();
 
-    std::cout << "status code[" << response.statusCode()
-              << "], body[" << response.body()
-              << "], description = " << response.statusDescription() << "]\n";
-  */
+    //TODO print if debug set
+    if(true or response.statusCode() == 408) {
+      PrintThread{} << "Thread[" << thread_id 
+                    << "] MsgID[" << i << thread_id
+                    << "] Status[" << response.statusCode()
+                    << "] Body: " << response.body();
+    }
+      
+    std::this_thread::sleep_for(millisecs * dist_real(engine));
+  }
+}
+
+
+int main() {
+  std::cout << "Starting REST client\n";
+
+  std::vector<std::thread> vt;
+  constexpr int number_of_messages = 2000; // TODO >= 1
+  constexpr int number_of_threads = 10; // TODO >= 1
+  constexpr std::chrono::milliseconds millisecs(250); // TODO >= 1
+  
+  for (int i = 0; i < number_of_threads; ++i) {
+    vt.emplace_back(std::thread{send_request, i, number_of_messages, millisecs});
+  }
+
+  for(auto &t : vt) {
+    t.join();
+  }
+
+  std::cout << "Threads[" << number_of_threads
+            << "]\nTotal messages[" << number_of_threads * number_of_messages
+            << "]\nSleep interval[~" << millisecs.count() << "ms]\n";
   return EXIT_SUCCESS;
 }

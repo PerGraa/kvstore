@@ -36,6 +36,7 @@ file(GLOB_RECURSE CLIENT_SOURCES  src/client.cpp src/client/*.[c|h]pp)
 add_executable(client ${CLIENT_SOURCES})
 set_target_properties(client PROPERTIES COMPILE_FLAGS ${STRICT_BUILD_FLAGS})
 target_include_directories(client PRIVATE "3rdparty")
+target_link_libraries(client pthread)
 
 ## Collect for convenience
 file(GLOB_RECURSE KVSTORE_SOURCES ${SERVER_SOURCES} ${CLIENT_SOURCES})

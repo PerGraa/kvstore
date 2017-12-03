@@ -45,13 +45,13 @@ void start_rest_server() {
 
   app.loglevel(crow::LogLevel::Debug);  // TODO(graa):
   app.debug_print();                    // TODO(graa):
-                                        // app.loglevel(crow::LogLevel::Warning); //TODO
+  app.loglevel(crow::LogLevel::Warning);  // TODO(graa):
 
   // According to standard: hardware_concurrency() may return 0
   std::cout << "REST server starting at 0.0.0.0:" << port << '\n'
             << "Server is using " << std::max(1u, std::thread::hardware_concurrency())
             << " threads\n"
-            << "Kill server with Ctrl+C\n";
+            << "Stop server with Ctrl+C\n";
 
   app.port(port).multithreaded().run();
   std::cout << "REST server shutting down\n";

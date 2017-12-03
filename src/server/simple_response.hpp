@@ -36,7 +36,7 @@ class SimpleResponse : public StoreResponse {
                       "GET: Found key[" + key + "] with value[" + value + "]\n"};
     }
     return response{404,  // HTTP Not Found
-                    "DEL: Key[" + key + "] not found\n"};
+                    "GET: Key[" + key + "] not found\n"};
   }
 
   response size_response(size_t size) override {
