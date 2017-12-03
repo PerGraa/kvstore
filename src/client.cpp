@@ -1,29 +1,25 @@
-// Silence GCC compiler warnings from embeddedRest
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wswitch-default"
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wshadow"
+// Silence Clang compiler warnings
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wold-style-cast"
+#pragma clang diagnostic ignored "-Wpessimizing-move"
+#pragma clang diagnostic ignored "-Wsign-conversion"
+#pragma clang diagnostic ignored "-Wcast-align"
+
 #include "embeddedRest/UrlRequest.hpp"
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
+
+#pragma clang diagnostic pop
 
 int main() {
   UrlRequest request;
   request.host("0.0.0.0");
-  request.port(18080);
+  request.port(8888);
   //  request.host("google.com");
-  request.timeout = {3, 0};  // 1 second timeout
-                             //  request.uri("/size");
+  request.timeout = {1, 0};  // 1 second timeout
+  request.uri("/size");
 
   request.addHeader("Accept: */*");
   //  request.addHeader("Connection: keep-alive");
-  auto response = std::move(request.perform());
+  auto response = request.perform();
   cout << "status code = " << response.statusCode() << ", body = *" << response.body()
        << "*" << endl;
 
@@ -36,7 +32,7 @@ int main() {
   request1.method("GET");
 
   //  request.perform();
-  auto response1 = std::move(request1.perform());
+  auto response1 = request1.perform();
   /*  auto response = std::move(request.perform());
 
     std::cout << "status code[" << response.statusCode()

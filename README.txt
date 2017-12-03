@@ -1,8 +1,7 @@
 Requirements:
 - Boost libraries installed at system
-- New-ish CMake (3.5.1 at development machine)
-- New-ish GCC (5.4.0 at development machine) with C++14 support (C++11
-  might be enough though)
+- A not too old CMake (3.5.1 at development machine)
+- A not too old Clang with C++14 support (4.0.0 at development machine)
 - The project should work in any fairly modern Linux installation, it
   has been developed and tested on Linux Mint 18.1 (codebase Ubuntu
   16.04) and Lubuntu 16.04 (in a virtual machine).

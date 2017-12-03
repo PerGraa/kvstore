@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 project(kvstore)
 
 ## Compiler
-SET (CMAKE_CXX_COMPILER  "g++-5")
+SET (CMAKE_CXX_COMPILER  "clang++-4.0")
 
 ## Standard soft build flags
 SET (CMAKE_CXX_FLAGS     "-O3 -std=c++14")
@@ -15,8 +15,8 @@ target_include_directories(unittest PRIVATE "src")
 target_include_directories(unittest PRIVATE "3rdparty")
 target_link_libraries(unittest pthread)
 
-## Let GCC go harder on kvstore itself
-SET (STRICT_BUILD_FLAGS "-Wpedantic -Wall -Wextra   -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wswitch-default -Wno-unused")
+## Let Clang go harder on kvstore itself
+SET (STRICT_BUILD_FLAGS "-Wpedantic -Wall -Wextra   -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op-parentheses -Wmissing-declarations -Wmissing-include-dirs -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wswitch-default -Wno-unused")
 
 ## Boost
 set(Boost_USE_STATIC_LIBS OFF)

@@ -1,17 +1,13 @@
-// Silence compiler warnings
-
-// Save diagnostic state
+// Silence Clang compiler warnings
 #pragma GCC diagnostic push 
-
-// Turn off the specific warning(s)
-#pragma GCC diagnostic ignored "-Wsign-conversion"
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#pragma GCC diagnostic ignored "-Wswitch-default"
-#pragma GCC diagnostic ignored "-Wcast-qual"
-#pragma GCC diagnostic ignored "-Wshadow"
+#pragma clang diagnostic ignored "-Wsign-conversion"
+#pragma clang diagnostic ignored "-Wold-style-cast"
+#pragma clang diagnostic ignored "-Wswitch-default"
+#pragma clang diagnostic ignored "-Wcast-qual"
+#pragma clang diagnostic ignored "-Wshadow"
+#pragma clang diagnostic ignored "-Wcast-align"
 
 #include "crow_all.h"
 
 // Turn the warning(s) back on
 #pragma GCC diagnostic pop
-
