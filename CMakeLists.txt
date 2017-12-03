@@ -19,6 +19,9 @@ target_link_libraries(unittest pthread)
 SET (STRICT_BUILD_FLAGS "-Wpedantic -Wall -Wextra   -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wswitch-default -Wno-unused")
 
 ## Boost
+set(Boost_USE_STATIC_LIBS OFF)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_RUNTIME OFF)
 find_package( Boost COMPONENTS system thread REQUIRED )
 
 ## Server
@@ -32,7 +35,7 @@ target_link_libraries(server ${Boost_LIBRARIES})
 file(GLOB_RECURSE CLIENT_SOURCES  src/client.cpp src/client/*.[c|h]pp)
 add_executable(client ${CLIENT_SOURCES})
 set_target_properties(client PROPERTIES COMPILE_FLAGS ${STRICT_BUILD_FLAGS})
-target_include_directories(client PRIVATE "3rdparty/embeddedRest")
+target_include_directories(client PRIVATE "3rdparty")
 
 ## Collect for convenience
 file(GLOB_RECURSE KVSTORE_SOURCES ${SERVER_SOURCES} ${CLIENT_SOURCES})
@@ -43,19 +46,23 @@ add_custom_target(
   COMMAND cppcheck
   --enable=all
   --std=c++14
-  --language=c++ 
+  --language=c++
+#  --check-config # Uncomment to see if cppcheck is missing something
   ${KVSTORE_SOURCES}
   ${TEST_SOURCES}
+  -I ${PROJECT_SOURCE_DIR}/src/
+  -I ${PROJECT_SOURCE_DIR}/3rdparty/
 )
 
 ## clang-tidy
 add_custom_target(
   clang-tidy
   COMMAND clang-tidy-4.0
-#  -fix # Warning: Uncommenting lets clang-tidy perform changes in source
+  -fix # Warning: Uncommenting lets clang-tidy perform changes in source
   ${KVSTORE_SOURCES}
   -checks=*,-llvm-header-guard,-header-filter=.* --
   -std=c++14
+  -I${PROJECT_SOURCE_DIR}/3rdparty/
 )
 
 ## clang-format

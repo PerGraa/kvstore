@@ -3,8 +3,8 @@
 #include <thread>
 
 #include "server/simple_response.hpp"
-#include "server/store.hpp"
 #include "server/rest_server.hpp"
+#include "server/store.hpp"
 
 int main() {
   using namespace kvstore;  // NOLINT
