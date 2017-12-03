@@ -10,41 +10,37 @@ namespace kvstore {
 // fitting HTTP response codes.
 class SimpleResponse : public StoreResponse {
  public:
-  void put_response(ResponseWriter &response, const std::string &key,
-                    const std::string &value, bool result) override {
+  response put_response(const std::string &key, const std::string &value,
+                        bool result) override {
     if (result) {
-      response.send(Pistache::Http::Code::Ok,
-                    "PUT: Saved key[" + key + "] with value[" + value + "]\n");
+      return response{200,  // HTTP OK
+                      "PUT: Saved key[" + key + "] with value[" + value + "]\n"};
     } else {
-      response.send(Pistache::Http::Code::Internal_Server_Error,
-                    "PUT: Could not save key[" + key + "] with value[" + value + "]\n");
+      return response{
+          500,  // HTTP Internal Server Error
+          "PUT: Could not save key[" + key + "] with value[" + value + "]\n"};
     }
   }
 
-  void delete_response(ResponseWriter &response, const std::string &key,
-                       bool result) override {
+  response delete_response(const std::string &key, bool result) override {
     if (result) {
-      response.send(Pistache::Http::Code::Ok,
-                    "DEL: Key[" + key + "] found and deleted\n");
+      return response{200,  // HTTP OK
+                      "DEL: Key[" + key + "] found and deleted\n"};
     } else {
-      response.send(Pistache::Http::Code::Ok, "DEL: Key[" + key + "] not found\n");
+      return response{200,  // HTTP OK
+                      "DEL: Key[" + key + "] not found\n"};
     }
   }
 
-  void get_response(ResponseWriter &response, const std::string &key,
-                    const std::string &value, bool result) override {
+  response get_response(const std::string &key, const std::string &value,
+                        bool result) override {
     if (result) {
-      response.send(Pistache::Http::Code::Ok,
-                    "GET: Found key[" + key + "] with value[" + value + "]\n");
+      return response{200,  // HTTP OK
+                      "GET: Found key[" + key + "] with value[" + value + "]\n"};
     } else {
-      response.send(Pistache::Http::Code::Not_Found,
-                    "GET: Did not find key[" + key + "]\n");
+      return response{404,  // HTTP Not Found
+                      "DEL: Key[" + key + "] not found\n"};
     }
-  }
-
-  void size_response(ResponseWriter &response, size_t size) override {
-    response.send(Pistache::Http::Code::Ok,
-                  "GET: Current store size[" + std::to_string(size) + "]\n");
   }
 
   response size_response(size_t size) override {

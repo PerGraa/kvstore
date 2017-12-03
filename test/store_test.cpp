@@ -6,11 +6,9 @@ using namespace kvstore;
 using std::to_string;
 
 // main test function should be declared precisely once, so why not here.
-int main(int argc, char **argv) {
-  RUN_ALL_TESTS();
-}
+int main(int argc, char **argv) { RUN_ALL_TESTS(); }
 
-TEST(full_cache, simple) {
+TEST(store, simple) {
   Store s;
 
   auto r = s.get("foo");
@@ -36,7 +34,7 @@ TEST(full_cache, simple) {
   EXPECT_FALSE(r.first);
 }
 
-TEST(full_cache, many) {
+TEST(store, many) {
   Store s;
   constexpr int MAX = 100000;
 

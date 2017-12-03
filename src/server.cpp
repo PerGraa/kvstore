@@ -2,7 +2,6 @@
 #include <iostream>
 #include <thread>
 
-#include "server/store_endpoint.hpp"
 #include "server/simple_response.hpp"
 #include "server/store.hpp"
 #include "server/rest_server.hpp"
@@ -12,6 +11,7 @@ int main() {
 
   // This call will not return in the normal case.
   // Kill server with Ctrl+C in terminal.
-  start_CROW_server<Store, SimpleResponse>(); //TODO
+  start_rest_server<Store, SimpleResponse>();
+
   return EXIT_SUCCESS;
 }
