@@ -4,8 +4,8 @@ Requirements:
   might be enough though)
 - The project should work in any fairly modern Linux installation, it
   has been developed and tested on Linux Mint 18.1 (codebase Ubuntu
-  16.04)
-- I have cheated a bit by using the googletest bundled with pistache
+  16.04) and Lubuntu 16.04 (in a virtual machine).
+- I have cheated a bit by using the googletest bundled with Pistache.
 
 Build:
 1. Unpack zip file
@@ -41,3 +41,15 @@ kvstore/build$ make clang-tidy
 Run clang-format:
 - Version 4.0.0 installed at development machine.
 kvstore/build$ make clang-format
+
+===================================================
+
+Third party libraries used:
+* Pistache. http://pistache.io/
+  - Used for REST HTTP server
+* googletest bundled with Pistache
+  - Used for unit testing
+* JSON for Modern C++. https://github.com/nlohmann/json
+  - Used for generating and parsing JSON, both server and client side
+* embeddedRest. https://github.com/fnc12/embeddedRest
+  - Used for client
