@@ -1,3 +1,0 @@
-[submodule "pistache"]
-	path = 3rdparty/pistache
-	url = git@github.com:oktal/pistache.git
