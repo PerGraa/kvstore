@@ -45,11 +45,13 @@ kvstore/build$ make clang-format
 ===================================================
 
 Third party libraries used:
-* Pistache. http://pistache.io/
+* Pistache - http://pistache.io/
   - Used for REST HTTP server
-* googletest bundled with Pistache
+* Google Test - https://github.com/google/googletest
   - Used for unit testing
-* JSON for Modern C++. https://github.com/nlohmann/json
+  - Bundled with Pistache
+* embeddedRest - https://github.com/fnc12/embeddedRest
+  - Used for HTTP client
+* RapidJSON - https://github.com/Tencent/rapidjson
   - Used for generating and parsing JSON, both server and client side
-* embeddedRest. https://github.com/fnc12/embeddedRest
-  - Used for client
+  - Bundled with embeddedRest
