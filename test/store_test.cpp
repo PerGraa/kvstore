@@ -1,9 +1,14 @@
-#include "gtest_include.hpp"
+#include "picotest/picotest.h"
 
 #include "server/store.hpp"
 
 using namespace kvstore;
 using std::to_string;
+
+// main test function should be declared precisely once, so why not here.
+int main(int argc, char **argv) {
+  RUN_ALL_TESTS();
+}
 
 TEST(full_cache, simple) {
   Store s;

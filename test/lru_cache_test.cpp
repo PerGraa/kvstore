@@ -1,4 +1,4 @@
-#include "gtest_include.hpp"
+#include "picotest/picotest.h"
 
 #include "server/lru_cache.hpp"
 

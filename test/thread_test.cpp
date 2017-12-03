@@ -1,7 +1,7 @@
 #include <thread>
 #include <vector>
 
-#include "gtest_include.hpp"
+#include "picotest/picotest.h"
 
 #include "server/store.hpp"
 

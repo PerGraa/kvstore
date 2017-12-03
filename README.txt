@@ -26,7 +26,7 @@ kvstore/build$ ./unittest
 
 
 
-===================================================
+====================================================================
 
 Development targets follows, have fun with them if so inclined :)
 
@@ -42,16 +42,17 @@ Run clang-format:
 - Version 4.0.0 installed at development machine.
 kvstore/build$ make clang-format
 
-===================================================
+====================================================================
 
-Third party libraries used:
-* Pistache - http://pistache.io/
+Third party libraries used and bundled with repository in
+kvstore/3rdparty/:
+* crow - https://github.com/ipkn/crow
   - Used for REST HTTP server
-* Google Test - https://github.com/google/googletest
+* picotest - https://github.com/nyanp/picotest
   - Used for unit testing
-  - Bundled with Pistache
 * embeddedRest - https://github.com/fnc12/embeddedRest
   - Used for HTTP client
 * RapidJSON - https://github.com/Tencent/rapidjson
   - Used for generating and parsing JSON, both server and client side
   - Bundled with embeddedRest
+TODO BOOST

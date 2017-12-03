@@ -2,35 +2,42 @@ cmake_minimum_required(VERSION 3.0)
 
 project(kvstore)
 
-## Unit tests
-add_subdirectory(pistache/googletest-release-1.7.0)
-include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-file(GLOB_RECURSE TEST_SOURCES  test/*.cpp test/*.hpp)
-add_executable(unittest ${TEST_SOURCES})
-target_include_directories(unittest PUBLIC "src")
-target_link_libraries(unittest gtest gtest_main)
-
 ## Compiler
 SET (CMAKE_CXX_COMPILER  "g++-5")
 
-## Pistache
-# Let GCC go easy on Pistache
+## Standard soft build flags
 SET (CMAKE_CXX_FLAGS     "-O3 -std=c++14")
-add_subdirectory (pistache/src)
+
+## Unit tests
+file(GLOB_RECURSE TEST_SOURCES  test/*.cpp)
+add_executable(unittest ${TEST_SOURCES})
+target_include_directories(unittest PRIVATE "src")
+target_include_directories(unittest PRIVATE "3rdparty")
+target_link_libraries(unittest pthread)
+
+## Let GCC go harder on kvstore itself
+SET (STRICT_BUILD_FLAGS "-Wpedantic -Wall -Wextra   -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wswitch-default -Wno-unused")
+
+
+add_subdirectory (3rdparty/pistache/src)
+
+## Boost
+find_package( Boost COMPONENTS system thread REQUIRED )
 
 ## Server
-# Let GCC go harder on kvstore itself
-SET (CMAKE_CXX_FLAGS     "-O3 -std=c++14   -Wpedantic -Wall -Wextra   -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wswitch-default -Wno-unused")
-
 file(GLOB_RECURSE SERVER_SOURCES  src/server.cpp src/server/*.[c|h]pp)
 add_executable(server ${SERVER_SOURCES})
+set_target_properties(server PROPERTIES COMPILE_FLAGS ${STRICT_BUILD_FLAGS})
 target_include_directories(server PRIVATE "src/common")
+target_include_directories(server PRIVATE "3rdparty")
 target_link_libraries(server pistache)
+target_link_libraries(server ${Boost_LIBRARIES})
 
 ## Client
 file(GLOB_RECURSE CLIENT_SOURCES  src/client.cpp src/client/*.[c|h]pp)
 add_executable(client ${CLIENT_SOURCES})
-target_include_directories(client PRIVATE "src/common")
+set_target_properties(client PROPERTIES COMPILE_FLAGS ${STRICT_BUILD_FLAGS})
+target_include_directories(client PRIVATE "src/common" "3rdparty/embeddedRest")
 target_link_libraries(client pistache)
 
 ## Collect for convenience
@@ -55,7 +62,7 @@ add_custom_target(
   ${KVSTORE_SOURCES}
   -checks=*,-llvm-header-guard,-header-filter=.* --
   -std=c++14
-  -I${PROJECT_SOURCE_DIR}/pistache/include/
+  -I${PROJECT_SOURCE_DIR}/3rdparty/pistache/include/
   -I${PROJECT_SOURCE_DIR}/src/common/
 )
 

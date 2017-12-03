@@ -46,6 +46,10 @@ class SimpleResponse : public StoreResponse {
     response.send(Pistache::Http::Code::Ok,
                   "GET: Current store size[" + std::to_string(size) + "]\n");
   }
+
+  response size_response(size_t size) override {
+    return {"GET: Current store size[" + std::to_string(size) + "]\n"};
+  }
 };
 }  // namespace kvstore
 

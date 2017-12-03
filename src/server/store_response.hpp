@@ -1,7 +1,8 @@
 #ifndef STORE_RESPONSE_HPP
 #define STORE_RESPONSE_HPP
 
-#include "pistache_include.hpp"
+#include "pistache_include.hpp" //TODO
+#include "crow/crow.hpp"
 #include <string>
 
 namespace kvstore {
@@ -10,6 +11,7 @@ namespace kvstore {
 class StoreResponse {
  public:
   using ResponseWriter = Pistache::Http::ResponseWriter;
+  using response = crow::response;
 
   virtual void put_response(ResponseWriter &response,  // NOLINT
                             const std::string &key, const std::string &value,
@@ -24,6 +26,7 @@ class StoreResponse {
 
   virtual void size_response(ResponseWriter &response,  // NOLINT
                              size_t size) = 0;
+  virtual response size_response(size_t size) = 0;
 };
 }  // namespace kvstore
 
