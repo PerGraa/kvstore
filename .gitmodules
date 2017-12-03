@@ -1,3 +1,6 @@
 [submodule "pistache"]
 	path = pistache
 	url = git@github.com:oktal/pistache.git
+[submodule "embeddedRest"]
+	path = embeddedRest
+	url = git@github.com:fnc12/embeddedRest.git
