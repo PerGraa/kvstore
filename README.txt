@@ -1,4 +1,5 @@
-Requirements:
+Requirements
+------------
 - Boost libraries installed at system
 - A not too old CMake (3.5.1 at development machine)
 - A not too old Clang with C++14 support (4.0.0 at development machine)
@@ -6,7 +7,9 @@ Requirements:
   has been developed and tested on Linux Mint 18.1 (codebase Ubuntu
   16.04) and Lubuntu 16.04 (in a virtual machine).
 
-Build:
+
+Build
+-----
 1. Unpack zip file
 2. $ cd kvstore
 3. kvstore$ mkdir build
@@ -15,37 +18,72 @@ Build:
 6. kvstore/build$ make all
 7. Just delete the "build" directory to start from scratch
 
-Run unit tests:
+
+Run unit tests
+--------------
 kvstore/build$ ./unittest
 
-TODO
-Run server:
-- To stop/kill server, press Ctrl+C in terminal.
+
+Run servers
+-----------
+To stop/kill server, press Ctrl+C in terminal.
+
+Server with complete cache, which writes simple output to clients.
 kvstore/build$ ./simple_server
 
-TODO
-Run client:
+FIFO cache based server, which writes JSON output to clients.
+kvstore/build$ ./fifo_json_server
 
+LRU cache based server, which writes JSON output to clients.
+kvstore/build$ ./lru_json_server
+
+
+Run client
+----------
+The client can and must be configured at command line as in the
+following example. The client will send randomized requests to the
+running server within these parameters.
+
+kvstore/build$ ./client 2 10 20 500
+
+Number of threads: 2
+Number of keys in store: 10
+Messages to send per thread: 20
+Time to let thread sleep between each message: 500 (milliseconds)
+
+
+Manual test of server using curl
+--------------------------------
+$ curl -i --request PUT    0.0.0.0:8888/put/key/foo/value/bar
+$ curl -i --request GET    0.0.0.0:8888/get/key/foo
+$ curl -i --request GET    0.0.0.0:8888/size
+$ curl -i --request DELETE 0.0.0.0:8888/key/foo
 
 ====================================================================
 
 Development targets follows, have fun with them if so inclined :)
 
-Run cppcheck:
+Run cppcheck
+------------
 - Version 1.81 installed at development machine.
 kvstore/build$ make cppcheck
 
-Run clang-tidy:
+
+Run clang-tidy
+--------------
 - Version 4.0.0 installed at development machine.
 kvstore/build$ make clang-tidy
 
-Run clang-format:
+
+Run clang-format
+----------------
 - Version 4.0.0 installed at development machine.
 kvstore/build$ make clang-format
 
 ====================================================================
 
-Third party libraries used:
+Third party libraries used
+--------------------------
 * boost
   - Used by crow
   - NOT bundled, must be on target system

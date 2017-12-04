@@ -121,7 +121,7 @@ int main(int argc, char** argv) {
   int millisecs = 0;
   std::string usage =
       "client <number_of_threads> <number_of_keys> <messages_per_thread> "
-      "<sleep_in_milliseconds>\nExample: client 2 10 20 500\n";
+      "<sleep_in_milliseconds>\nExample: ./client 2 10 20 500\n";
 
   if (argc != 5) {
     std::cerr << usage;
