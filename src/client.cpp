@@ -81,14 +81,13 @@ void send_request(int thread_id, int number_of_messages, int number_of_keys, int
     // Wait for response or timeout
     auto response = request.perform();
 
-    // These prints with mutex adds wall time for running client.
+    // These printouts with mutex may add extra wall time while running client.
     // Linux on older laptop:       4-5% extra time
-    // Linux in VM on newer laptop: TODO
+    // Linux in VM on newer laptop: Does not seem to make a difference
     PrintThread{} << "Thread[" << thread_id << "] MsgID[" << i << thread_id
                   << "] Status[" << response.statusCode()
-                  << "] Body: " << response.body()
-                  << (response.statusCode() == 408 ? "\n" : "");
-
+                  << "] Body: " << response.body() << '\n';
+    
     // Sleep a bit
     std::this_thread::sleep_for(millisecs * dist_real(engine));
   }
