@@ -34,7 +34,7 @@ class PrintThread : public std::ostringstream {
   static std::mutex g_mutex_print;
 };
 
-std::mutex PrintThread::g_mutex_print{};
+std::mutex PrintThread::g_mutex_print{};  // NOLINT
 
 void send_request(int thread_id, int number_of_messages, int number_of_keys, int ms) {
   std::chrono::milliseconds millisecs(ms);
@@ -94,7 +94,7 @@ void send_request(int thread_id, int number_of_messages, int number_of_keys, int
   }
 }
 
-bool check_input(char* input, int& target, const std::string& name,
+bool check_input(char* input, int& target, const std::string& name,  // NOLINT
                  const std::string& usage) {
   std::istringstream ss(input);
   target = 0;
@@ -108,10 +108,10 @@ bool check_input(char* input, int& target, const std::string& name,
 }
 
 int main(int argc, char** argv) {
-  int number_of_threads  = 0;
-  int number_of_keys     = 0;
-  int number_of_messages = 0;
-  int millisecs          = 0;
+  int threads   = 0;
+  int keys      = 0;
+  int messages  = 0;
+  int millisecs = 0;
   std::string usage =
       "client <number_of_threads> <number_of_keys> <messages_per_thread> "
       "<sleep_in_milliseconds>\nExample: client 2 10 20 500\n";
@@ -122,10 +122,10 @@ int main(int argc, char** argv) {
     return EXIT_FAILURE;
   }
 
-  if ((!check_input(argv[1], number_of_threads, "number_of_threads", usage)) ||
-      (!check_input(argv[2], number_of_keys, "number_of_keys", usage)) ||
-      (!check_input(argv[3], number_of_messages, "messages_per_thread", usage)) ||
-      (!check_input(argv[4], millisecs, "sleep_in_milliseconds", usage))) {
+  if ((!check_input(argv[1], threads, "number_of_threads", usage)) ||        // NOLINT
+      (!check_input(argv[2], keys, "number_of_keys", usage)) ||              // NOLINT
+      (!check_input(argv[3], messages, "messages_per_thread", usage)) ||     // NOLINT
+      (!check_input(argv[4], millisecs, "sleep_in_milliseconds", usage))) {  // NOLINT
     return EXIT_FAILURE;
   }
 
@@ -133,10 +133,9 @@ int main(int argc, char** argv) {
 
   std::cout << "Sending messages\n";
 
-  for (int i = 0; i < number_of_threads; ++i) {
+  for (int i = 0; i < threads; ++i) {
     // Start threads
-    vt.emplace_back(
-        std::thread{send_request, i, number_of_messages, number_of_keys, millisecs});
+    vt.emplace_back(std::thread{send_request, i, messages, keys, millisecs});
   }
 
   // Wait for all threads to finish

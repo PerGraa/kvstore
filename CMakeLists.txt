@@ -61,7 +61,7 @@ add_custom_target(
 #  -fix # Warning: Uncommenting lets clang-tidy perform changes in source
   ${KVSTORE_SOURCES}
   -checks=*,-llvm-header-guard,-header-filter=.* --
-  -std=c++14
+  -std=c++14 # Removing this may crash clang-tidy
   -I${PROJECT_SOURCE_DIR}/3rdparty/
 )
 
