@@ -18,7 +18,7 @@ int main() {
   // Simulate there is room for 1000 bytes in the LRU cache.
   // Write JSON output to clients.
   constexpr int max = 1000;
-  std::cout << "Server: LRU cache store with " << max <<" bytes\n"
+  std::cout << "Server: LRU cache store with " << max << " bytes\n"
             << "JSON REST server output\n";
   start_rest_server<LRUCache<1000>, JSONResponse>();
 

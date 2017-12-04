@@ -18,7 +18,7 @@ int main() {
   // Simulate there is room for 100 bytes in the FIFO cache.
   // Write JSON output to clients.
   constexpr int max = 100;
-  std::cout << "Server: FIFO cache store with " << max <<" bytes\n"
+  std::cout << "Server: FIFO cache store with " << max << " bytes\n"
             << "JSON REST server output\n";
   start_rest_server<FIFOCache<max>, JSONResponse>();
 
