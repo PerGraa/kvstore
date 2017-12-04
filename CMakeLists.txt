@@ -24,22 +24,36 @@ set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 find_package( Boost COMPONENTS system thread REQUIRED )
 
-## Server
-file(GLOB_RECURSE SERVER_SOURCES  src/server.cpp src/server/*.[c|h]pp)
-add_executable(server ${SERVER_SOURCES})
-set_target_properties(server PROPERTIES COMPILE_FLAGS ${STRICT_BUILD_FLAGS})
-target_include_directories(server PRIVATE "3rdparty")
-target_link_libraries(server ${Boost_LIBRARIES})
+## Simple server
+file(GLOB_RECURSE SIMPLE_SOURCES  src/simple_server.cpp src/server/*.[c|h]pp)
+add_executable(simple_server ${SIMPLE_SOURCES})
+set_target_properties(simple_server PROPERTIES COMPILE_FLAGS ${STRICT_BUILD_FLAGS})
+target_include_directories(simple_server PRIVATE "3rdparty")
+target_link_libraries(simple_server ${Boost_LIBRARIES})
+
+## FIFO/JSON server
+file(GLOB_RECURSE FIFO_SOURCES  src/fifo_json_server.cpp src/server/*.[c|h]pp)
+add_executable(fifo_json_server ${FIFO_SOURCES})
+set_target_properties(fifo_json_server PROPERTIES COMPILE_FLAGS ${STRICT_BUILD_FLAGS})
+target_include_directories(fifo_json_server PRIVATE "3rdparty")
+target_link_libraries(fifo_json_server ${Boost_LIBRARIES})
+
+## LRU/JSON server
+file(GLOB_RECURSE LRU_SOURCES  src/lru_json_server.cpp src/server/*.[c|h]pp)
+add_executable(lru_json_server ${LRU_SOURCES})
+set_target_properties(lru_json_server PROPERTIES COMPILE_FLAGS ${STRICT_BUILD_FLAGS})
+target_include_directories(lru_json_server PRIVATE "3rdparty")
+target_link_libraries(lru_json_server ${Boost_LIBRARIES})
 
 ## Client
-file(GLOB_RECURSE CLIENT_SOURCES  src/client.cpp src/client/*.[c|h]pp)
+file(GLOB_RECURSE CLIENT_SOURCES  src/client.cpp)
 add_executable(client ${CLIENT_SOURCES})
 set_target_properties(client PROPERTIES COMPILE_FLAGS ${STRICT_BUILD_FLAGS})
 target_include_directories(client PRIVATE "3rdparty")
 target_link_libraries(client pthread)
 
 ## Collect for convenience
-file(GLOB_RECURSE KVSTORE_SOURCES ${SERVER_SOURCES} ${CLIENT_SOURCES})
+file(GLOB_RECURSE KVSTORE_SOURCES ${SIMPLE_SOURCES} ${FIFO_SOURCES} ${LRU_SOURCES} ${CLIENT_SOURCES})
 
 ## cppcheck
 add_custom_target(
@@ -58,7 +72,7 @@ add_custom_target(
 add_custom_target(
   clang-tidy
   COMMAND clang-tidy-4.0
-#  -fix # Warning: Uncommenting lets clang-tidy perform changes in source
+  -fix # Warning: Uncommenting lets clang-tidy perform changes in source
   ${KVSTORE_SOURCES}
   -checks=*,-llvm-header-guard,-header-filter=.* --
   -std=c++14 # Removing this may crash clang-tidy

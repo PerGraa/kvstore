@@ -6,7 +6,7 @@
 
 namespace kvstore {
 
-// ABC for writing different types of REST HTTP server responses
+// ABC for writing different kinds of REST HTTP server responses
 class StoreResponse {
  public:
   using response = crow::response;

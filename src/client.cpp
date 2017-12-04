@@ -60,8 +60,8 @@ void send_request(int thread_id, int number_of_messages, int number_of_keys, int
     switch (dist_discrete(engine) % 4) {
       case 0: {
         request.method("PUT");
-        request.uri("/put/key/" + "key_" + get_random_key() + "/value/" +
-                    std::to_string(i) + "_thread" + std::to_string(thread_id));
+        request.uri("/put/key/" + get_random_key() + "/value/" + std::to_string(i) +
+                    "_thread" + std::to_string(thread_id));
       } break;
       case 1: {
         request.method("DELETE");

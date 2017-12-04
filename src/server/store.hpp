@@ -33,6 +33,7 @@ class StoreBase {
   }
 
   // Delete a pair from the store by key
+  // Key must not be empty string.
   // Return: True if key/value was present before deletion.
   //         False if key was not found.
   bool del(const std::string &key) {
@@ -47,6 +48,7 @@ class StoreBase {
   }
 
   // Get a pair from the store by key
+  // Key must not be empty string.
   // Return:
   //   bool:   Key found or not.
   //   string: Value if key was found.
@@ -96,6 +98,7 @@ class Store : public StoreBase<Store> {
     try {
       return {true, m_map.at(key)};
     } catch (const std::out_of_range &) {
+      // Not found
       return {false, key};
     }
   }

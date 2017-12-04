@@ -21,8 +21,10 @@ kvstore/build$ ./unittest
 TODO
 Run server:
 - To stop/kill server, press Ctrl+C in terminal.
-kvstore/build$ ./server
+kvstore/build$ ./simple_server
 
+TODO
+Run client:
 
 
 ====================================================================
@@ -50,12 +52,9 @@ Third party libraries used:
 * crow - https://github.com/ipkn/crow
   - Used for REST HTTP server
   - Bundled in kvstore/3rdparty/
-* picotest - https://github.com/nyanp/picotest
-  - Used for unit testing
-  - Bundled in kvstore/3rdparty/
 * embeddedRest - https://github.com/fnc12/embeddedRest
   - Used for HTTP client
   - Bundled in kvstore/3rdparty/
-* RapidJSON - https://github.com/Tencent/rapidjson
-  - Used for generating and parsing JSON, both server and client side
-  - Bundled with embeddedRest in kvstore/3rdparty/
+* picotest - https://github.com/nyanp/picotest
+  - Used for unit testing
+  - Bundled in kvstore/3rdparty/

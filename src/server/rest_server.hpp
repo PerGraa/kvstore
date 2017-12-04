@@ -5,7 +5,7 @@
 
 namespace kvstore {
 
-// A REST HTTP server as provided by the Crow library.
+// A REST HTTP server as provided by the crow library.
 // This function will not return in the normal case.
 // Kill server with Ctrl+C in terminal.
 template <typename StoreType, typename StoreResponseType>
@@ -29,6 +29,9 @@ void start_rest_server() {
       });
 
   // Get
+  // crow fails at run-time if two different routes is defined with
+  // the same URL. This happens even with two different HTTP methods
+  // like GET and DELETE, so the method is added into the URL.
   CROW_ROUTE(app, "/get/key/<string>")
       .methods("GET"_method)([&m_store, &m_writer](std::string key) {
         bool result;
@@ -43,9 +46,8 @@ void start_rest_server() {
     return m_writer.size_response(m_store.size());
   });
 
-  app.loglevel(crow::LogLevel::Debug);    // TODO(graa):
-  app.debug_print();                      // TODO(graa):
-  app.loglevel(crow::LogLevel::Warning);  // TODO(graa):
+  // Only output warnings or worse
+  app.loglevel(crow::LogLevel::Warning);
 
   // According to standard: hardware_concurrency() may return 0
   std::cout << "REST server starting at 0.0.0.0:" << port << '\n'

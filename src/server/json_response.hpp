@@ -15,10 +15,11 @@ class JSONResponse : public StoreResponse {
   response put_response(const std::string &key, const std::string &value,
                         bool result) override {
     Json json;
-    json["type"]   = "put";
-    json["result"] = result;
-    json["key"]    = key;
+    // Reserve order in resulting JSON output, not that it matters much.
     json["value"]  = value;
+    json["key"]    = key;
+    json["result"] = result;
+    json["type"]   = "put";
 
     return response{(result ? 200 : 500),  // HTTP OK or HTTP Internal Server Error
                     json};
@@ -26,9 +27,9 @@ class JSONResponse : public StoreResponse {
 
   response delete_response(const std::string &key, bool result) override {
     Json json;
-    json["type"]   = "delete";
-    json["result"] = result;
     json["key"]    = key;
+    json["result"] = result;
+    json["type"]   = "delete";
 
     return json;
   }
@@ -36,9 +37,6 @@ class JSONResponse : public StoreResponse {
   response get_response(const std::string &key, const std::string &value,
                         bool result) override {
     Json json;
-    json["type"]   = "get";
-    json["result"] = result;
-    json["key"]    = key;
 
     if (result) {
       json["value"] = value;
@@ -49,15 +47,19 @@ class JSONResponse : public StoreResponse {
       json["value"] = Json{};
     }
 
+    json["key"]    = key;
+    json["result"] = result;
+    json["type"]   = "get";
+
     return response{(result ? 200 : 404),  // HTTP OK or HTTP Not Found
                     json};
   }
 
   response size_response(size_t size) override {
     Json json;
-    json["type"]   = "size";
-    json["result"] = true;
     json["size"]   = size;
+    json["result"] = true;
+    json["type"]   = "size";
 
     return json;
   }
