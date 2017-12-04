@@ -39,8 +39,15 @@ class JSONResponse : public StoreResponse {
     json["type"]   = "get";
     json["result"] = result;
     json["key"]    = key;
-    // C++ nullptr results in the JSON type "null"
-    json["value"]  = (result ? value : nullptr);
+
+    if (result) {
+      json["value"] = value;
+    } else {
+      // Results in the JSON type "null"
+      // Fair choice since the empty string would still be a string,
+      // JSON null is not a string.
+      json["value"] = Json{};
+    }
 
     return response{(result ? 200 : 404),  // HTTP OK or HTTP Not Found
                     json};

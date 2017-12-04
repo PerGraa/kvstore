@@ -87,7 +87,7 @@ void send_request(int thread_id, int number_of_messages, int number_of_keys, int
     PrintThread{} << "Thread[" << thread_id << "] MsgID[" << i << thread_id
                   << "] Status[" << response.statusCode()
                   << "] Body: " << response.body() << '\n';
-    
+
     // Sleep a bit
     std::this_thread::sleep_for(millisecs * dist_real(engine));
   }
