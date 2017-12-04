@@ -20,7 +20,7 @@ class JSONResponse : public StoreResponse {
     json["key"]    = key;
     json["value"]  = value;
 
-    return response{(result ? 200 : 200),  // HTTP OK or HTTP Internal Server Error
+    return response{(result ? 200 : 500),  // HTTP OK or HTTP Internal Server Error
                     json};
   }
 
