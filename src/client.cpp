@@ -79,7 +79,7 @@ void send_request(int thread_id, int number_of_messages, int number_of_keys, int
 
     // These prints with mutex adds wall time for running client.
     // Linux on older laptop:       4-5% extra time
-    // Linux in VM on newer laptop:
+    // Linux in VM on newer laptop: TODO
     PrintThread{} << "Thread[" << thread_id << "] MsgID[" << i << thread_id
                   << "] Status[" << response.statusCode()
                   << "] Body: " << response.body()
