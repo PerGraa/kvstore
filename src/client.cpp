@@ -10,9 +10,7 @@
 #pragma clang diagnostic ignored "-Wpessimizing-move"
 #pragma clang diagnostic ignored "-Wsign-conversion"
 #pragma clang diagnostic ignored "-Wcast-align"
-
 #include "embeddedRest/UrlRequest.hpp"
-
 #pragma clang diagnostic pop
 
 // Thread safe cout class
@@ -36,6 +34,7 @@ class PrintThread : public std::ostringstream {
 
 std::mutex PrintThread::g_mutex_print{};  // NOLINT
 
+// The tread "main" function.
 void send_request(int thread_id, int number_of_messages, int number_of_keys, int ms) {
   std::chrono::milliseconds millisecs(ms);
 
@@ -51,6 +50,7 @@ void send_request(int thread_id, int number_of_messages, int number_of_keys, int
   std::uniform_int_distribution<int> dist_discrete(1, 4 * number_of_keys);
   std::uniform_real_distribution<> dist_real(0.75, 1.25);
 
+  // Select a random key within given range
   auto get_random_key = [&]() {
     return std::to_string(dist_discrete(engine) % number_of_keys);
   };
@@ -60,8 +60,8 @@ void send_request(int thread_id, int number_of_messages, int number_of_keys, int
     switch (dist_discrete(engine) % 4) {
       case 0: {
         request.method("PUT");
-        request.uri("/put/key/" + get_random_key() + "/value/" + std::to_string(i) +
-                    "_thread" + std::to_string(thread_id));
+        request.uri("/put/key/" + "key_" + get_random_key() + "/value/" +
+                    std::to_string(i) + "_thread" + std::to_string(thread_id));
       } break;
       case 1: {
         request.method("DELETE");
@@ -88,13 +88,14 @@ void send_request(int thread_id, int number_of_messages, int number_of_keys, int
                   << "] Status[" << response.statusCode()
                   << "] Body: " << response.body() << '\n';
 
-    // Sleep a bit
+    // Have a random nap
     std::this_thread::sleep_for(millisecs * dist_real(engine));
   }
 }
 
-bool check_input(char* input, int& target, const std::string& name,  // NOLINT
-                 const std::string& usage) {
+// Sanity check argument
+bool check_arg(char* input, int& target, const std::string& name,  // NOLINT
+               const std::string& usage) {
   std::istringstream ss(input);
   target = 0;
 
@@ -106,6 +107,13 @@ bool check_input(char* input, int& target, const std::string& name,  // NOLINT
   return true;
 }
 
+// Test the kvstore server by sending randomized messages within
+// certain limits:
+// - Variable number of client threads
+// - Variable number of different keys shared by all threads
+// - Variable number of messages sent by each thread
+// - Variable sleep period after message request/response. The period
+//   is randomized +/- 25% to give a more interesting message flow.
 int main(int argc, char** argv) {
   int threads   = 0;
   int keys      = 0;
@@ -121,10 +129,10 @@ int main(int argc, char** argv) {
     return EXIT_FAILURE;
   }
 
-  if ((!check_input(argv[1], threads, "number_of_threads", usage)) ||        // NOLINT
-      (!check_input(argv[2], keys, "number_of_keys", usage)) ||              // NOLINT
-      (!check_input(argv[3], messages, "messages_per_thread", usage)) ||     // NOLINT
-      (!check_input(argv[4], millisecs, "sleep_in_milliseconds", usage))) {  // NOLINT
+  if ((!check_arg(argv[1], threads, "number_of_threads", usage)) ||        // NOLINT
+      (!check_arg(argv[2], keys, "number_of_keys", usage)) ||              // NOLINT
+      (!check_arg(argv[3], messages, "messages_per_thread", usage)) ||     // NOLINT
+      (!check_arg(argv[4], millisecs, "sleep_in_milliseconds", usage))) {  // NOLINT
     return EXIT_FAILURE;
   }
 
@@ -142,6 +150,6 @@ int main(int argc, char** argv) {
     t.join();
   }
 
-  std::cout << "Done. Client exiting\n";
+  std::cout << "Done with request/response. Client exiting\n";
   return EXIT_SUCCESS;
 }
