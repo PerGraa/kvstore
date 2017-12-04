@@ -1,8 +1,8 @@
-#include <vector>
 #include <chrono>
-#include <thread>
 #include <mutex>
 #include <sstream>
+#include <thread>
+#include <vector>
 
 // Silence Clang compiler warnings
 #pragma clang diagnostic push
@@ -19,9 +19,13 @@
 // Example of use: PrintThread{} << "Hello world!" << std::endl;
 class PrintThread : public std::ostringstream {
  public:
-  PrintThread() = default;
+  PrintThread()                   = default;
+  PrintThread(const PrintThread&) = delete;
+  PrintThread& operator=(const PrintThread&) = delete;
+  PrintThread(const PrintThread&&)           = delete;
+  PrintThread&& operator=(const PrintThread&&) = delete;
 
-  ~PrintThread() {
+  ~PrintThread() override {
     std::lock_guard<std::mutex> guard(g_mutex_print);
     std::cout << this->str();
   }
@@ -90,7 +94,8 @@ void send_request(int thread_id, int number_of_messages, int number_of_keys, int
   }
 }
 
-bool check_input(char* input, int& target, std::string name, std::string usage) {
+bool check_input(char* input, int& target, const std::string& name,
+                 const std::string& usage) {
   std::istringstream ss(input);
   target = 0;
 

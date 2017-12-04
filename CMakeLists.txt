@@ -58,10 +58,10 @@ add_custom_target(
 add_custom_target(
   clang-tidy
   COMMAND clang-tidy-4.0
-  -fix # Warning: Uncommenting lets clang-tidy perform changes in source
+#  -fix # Warning: Uncommenting lets clang-tidy perform changes in source
   ${KVSTORE_SOURCES}
   -checks=*,-llvm-header-guard,-header-filter=.* --
-#  -std=c++14
+  -std=c++14
   -I${PROJECT_SOURCE_DIR}/3rdparty/
 )
 
