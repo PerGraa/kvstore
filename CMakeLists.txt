@@ -95,6 +95,7 @@ add_custom_target(
   -checks=*,-llvm-header-guard,-header-filter=.* --
   -std=c++14 # Removing this may crash clang-tidy
   -I${PROJECT_SOURCE_DIR}/3rdparty/
+  -I${CMAKE_CURRENT_BINARY_DIR}
 )
 
 ## clang-format
