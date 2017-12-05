@@ -18,7 +18,7 @@ int main() {
 
   // Simulate there is room for 1000 bytes in the FIFO cache.
   // Write JSON output to clients.
-  constexpr int max = 300; //TODO -> 1000
+  constexpr int max = 300;  // TODO -> 1000
   std::cout << "Server: FIFO cache store with " << max << " bytes\n"
             << "Protobuf swap file used when cache runs full\n"
             << "JSON REST server output\n";
