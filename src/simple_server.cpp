@@ -15,7 +15,7 @@ int main() {
   // The call below will not return in the normal case.
   // Kill server with Ctrl+C in terminal.
 
-  // Full caching and simple responses to client.
+  // Full cache store and simple responses to client.
   constexpr int max = 1000;
   std::cout << "Server: Full store\n"
             << "Simple REST server output\n";

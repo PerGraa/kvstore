@@ -13,7 +13,10 @@ namespace kvstore {
 // structure.
 template <size_t MAX_SIZE>
 class LRUCache : public StoreBase<LRUCache<MAX_SIZE>> {
- public:
+  // Allow our base class to call our private member functions
+  friend class StoreBase<LRUCache<MAX_SIZE>>;
+
+private:
   bool put_impl(const std::string &key, const std::string &value) override {
     if (key.length() + value.length() > MAX_SIZE) {
       // Do not bother if there will never be space for given key/value
