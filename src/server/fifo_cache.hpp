@@ -15,15 +15,13 @@ namespace kvstore {
 // Can be extended with a swap, defaults to the EmptySwap which puts
 // all input into the void.
 template <size_t MAX_SIZE, class SwapType = EmptySwap>
-class FIFOCache : public StoreBase<FIFOCache<MAX_SIZE, SwapType>>,
-                  public SwapType {
+class FIFOCache : public StoreBase<FIFOCache<MAX_SIZE, SwapType>>, public SwapType {
   // Allow our base class to call our private member functions
   friend class StoreBase<FIFOCache<MAX_SIZE, SwapType>>;
 
-private:
+ private:
   // Updating an existing value will *not* move position in queue.
   bool put_impl(const std::string &key, const std::string &value) override {
-
     // Try to update existing pair in primary storage
     auto it = find_by_key(key);
 
@@ -33,11 +31,11 @@ private:
       m_current_size += value.length();
       // Update primary with new value
       *it = {key, value};
-    } else if(SwapType::swap_has(key)) { // Not in primary storage, try secondary storage
+      // Not in primary storage, try secondary storage
+    } else if (SwapType::swap_has(key)) {
       // Update secondary with new value
       SwapType::swap_save(key, value);
-    }
-    else { // Not found anywhere, add new pair in primary storage
+    } else {  // Not found anywhere, add new pair in primary storage
       // Update estimated memory use
       m_current_size += key.length();
       m_current_size += value.length();

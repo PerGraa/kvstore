@@ -71,7 +71,7 @@ class StoreBase {
     return static_cast<CacheType *>(this)->size_impl();
   }
 
-private:
+ private:
   virtual bool put_impl(const std::string &key, const std::string &value) = 0;
   virtual bool delete_impl(const std::string &key) = 0;
   virtual const std::pair<bool, std::string> get_impl(const std::string &key) = 0;
@@ -85,7 +85,7 @@ class Store : public StoreBase<Store> {
   // Allow our base class to call our private member functions
   friend class StoreBase<Store>;
 
-private:
+ private:
   bool put_impl(const std::string &key, const std::string &value) override {
     auto p = m_map.insert({key, value});
     if (!p.second) {
