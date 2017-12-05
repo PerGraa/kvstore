@@ -3,7 +3,8 @@
 #include <thread>
 
 #include "server/json_response.hpp"
-#include "server/lru_cache.hpp"
+#include "server/fifo_cache.hpp"
+#include "server/protobuf_swap.hpp"
 #include "server/rest_server.hpp"
 
 int main() {
@@ -15,12 +16,13 @@ int main() {
   // The call below will not return in the normal case.
   // Kill server with Ctrl+C in terminal.
 
-  // Simulate there is room for 100 bytes in the LRU cache.
+  // Simulate there is room for 1000 bytes in the FIFO cache.
   // Write JSON output to clients.
-  constexpr int max = 100;
-  std::cout << "Server: LRU cache store with " << max << " bytes\n"
+  constexpr int max = 300; //TODO -> 1000
+  std::cout << "Server: FIFO cache store with " << max << " bytes\n"
+            << "Protobuf swap file used when cache runs full\n"
             << "JSON REST server output\n";
-  start_rest_server<LRUCache<1000>, JSONResponse>();
+  start_rest_server<FIFOCache<max, ProtobufSwap>, JSONResponse>();
 
   return EXIT_SUCCESS;
 }

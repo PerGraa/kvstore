@@ -1,0 +1,4 @@
+example
+example.recordio
+*.pb.cc
+*.pb.h

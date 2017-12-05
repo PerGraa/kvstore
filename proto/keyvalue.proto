@@ -1,0 +1,5 @@
+message KeyValue {
+    required bool valid = 1;
+    required string key = 2;
+    required string value = 3;
+}

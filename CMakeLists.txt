@@ -2,8 +2,12 @@ cmake_minimum_required(VERSION 3.0)
 
 project(kvstore)
 
+## recordio
+# Keep this target here, or else it overwrites compiler settings below
+add_subdirectory("3rdparty/recordio")
+
 ## Compiler
-SET (CMAKE_CXX_COMPILER  "clang++-4.0")
+SET (CMAKE_CXX_COMPILER  "/usr/bin/clang++-4.0")
 
 ## Standard soft build flags
 SET (CMAKE_CXX_FLAGS     "-O3 -std=c++14")
@@ -45,6 +49,20 @@ set_target_properties(lru_json_server PROPERTIES COMPILE_FLAGS ${STRICT_BUILD_FL
 target_include_directories(lru_json_server PRIVATE "3rdparty")
 target_link_libraries(lru_json_server ${Boost_LIBRARIES})
 
+## protobuf
+add_subdirectory(proto)
+
+## FIFO/JSON/protobuf server
+file(GLOB_RECURSE FJP_SOURCES  src/fifo_json_protobuf_server.cpp src/server/*.[c|h]pp)
+add_executable(fifo_json_protobuf_server ${FJP_SOURCES})
+set_target_properties(fifo_json_protobuf_server PROPERTIES COMPILE_FLAGS ${STRICT_BUILD_FLAGS})
+target_include_directories(fifo_json_protobuf_server PRIVATE "3rdparty")
+target_include_directories(fifo_json_protobuf_server PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries(fifo_json_protobuf_server ${Boost_LIBRARIES})
+target_link_libraries(fifo_json_protobuf_server proto recordio z ${PROTOBUF_LIBRARY})
+
+#TODO More proto servers
+
 ## Client
 file(GLOB_RECURSE CLIENT_SOURCES  src/client.cpp)
 add_executable(client ${CLIENT_SOURCES})
@@ -53,7 +71,7 @@ target_include_directories(client PRIVATE "3rdparty")
 target_link_libraries(client pthread)
 
 ## Collect for convenience
-file(GLOB_RECURSE KVSTORE_SOURCES ${SIMPLE_SOURCES} ${FIFO_SOURCES} ${LRU_SOURCES} ${CLIENT_SOURCES})
+file(GLOB_RECURSE KVSTORE_SOURCES ${SIMPLE_SOURCES} ${FIFO_SOURCES} ${LRU_SOURCES} ${FJP_SOURCES} ${CLIENT_SOURCES})
 
 ## cppcheck
 add_custom_target(

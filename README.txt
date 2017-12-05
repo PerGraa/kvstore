@@ -1,8 +1,13 @@
 Requirements
 ------------
-- Boost libraries installed at system
+Short version for installing requirements in Ubuntu:
+$ sudo apt install cmake clang-4.0 libboost-all-dev protobuf-compiler libprotobuf-dev
+
+Longer version:
 - A not too old CMake (3.5.1 at development machine)
 - A not too old Clang with C++14 support (4.0.0 at development machine)
+- Boost libraries installed at system
+- Google protobuf (both compiler and dev libs)
 - The project should work in any fairly modern Linux installation, it
   has been developed and tested on Linux Mint 18.1 (codebase Ubuntu
   16.04) and Lubuntu 16.04 (in a virtual machine).
@@ -37,6 +42,7 @@ kvstore/build$ ./fifo_json_server
 LRU cache based server, which writes JSON output to clients.
 kvstore/build$ ./lru_json_server
 
+// TODO More servers
 
 Run client
 ----------
@@ -93,6 +99,15 @@ Third party libraries used
 * embeddedRest - https://github.com/fnc12/embeddedRest
   - Used for HTTP client
   - Bundled in kvstore/3rdparty/
+* Google Protocol Buffers
+  - Used by some servers for serializing data to/fro disk.
+  - NOT bundled, must be on target system
 * picotest - https://github.com/nyanp/picotest
   - Used for unit testing
+  - Bundled in kvstore/3rdparty/
+* recordio
+  - Used for handling protobuf data on disk.
+  - https://github.com/xeno14/recordio
+  - Note that there several libraries with the same name and nearly
+    same functionality.
   - Bundled in kvstore/3rdparty/
