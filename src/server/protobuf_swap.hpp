@@ -3,6 +3,7 @@
 
 #include <iterator>
 #include <string>
+#include "swap.hpp"
 #include "proto/keyvalue.pb.h"
 
 // Silence Clang compiler warnings
@@ -48,13 +49,13 @@ class ProtobufSwap : public SwapBase<ProtobufSwap> {
 
   const std::pair<bool, std::string> swap_get_impl(const std::string& key) override {
     if (key == "magic") {  // TODO
-      std::cout << "=====DUMPING======================\n";
-      for (const auto& kv : recordio::ReaderRange<KeyValue>(m_file_name)) {
-        std::cout << "valid[" << kv.valid() << "]\n";
-        std::cout << "key[" << kv.key() << "]\n";
-        std::cout << "value[" << kv.value() << "]\n";
+      std::cout << "=====DUMPING======================\n"; //NOLINT
+      for (const auto& kv : recordio::ReaderRange<KeyValue>(m_file_name)) {//NOLINT
+        std::cout << "valid[" << kv.valid() << "]\n";//NOLINT
+        std::cout << "key[" << kv.key() << "]\n";//NOLINT
+        std::cout << "value[" << kv.value() << "]\n";//NOLINT
       }
-      std::cout << "=====DONE=========================\n";
+      std::cout << "=====DONE=========================\n";//NOLINT
     }
 
     auto valid        = false;
