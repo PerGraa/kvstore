@@ -3,7 +3,6 @@
 
 #include "swap.hpp"
 #include "proto/keyvalue.pb.h"
-#include <iterator>
 #include <string>
 
 // Silence Clang compiler warnings
@@ -25,9 +24,13 @@ class ProtobufSwap : public SwapBase<ProtobufSwap> {
   // Allow our base class to call our private member functions
   friend class SwapBase<ProtobufSwap>;
 
- private:
-  // TODO(graa): Delete swap file in ctor
+ public:
+  ProtobufSwap() {
+    // Delete possible swap file from earlier server run
+    std::remove(m_file_name.c_str());
+  }
 
+ private:
   bool swap_save_impl(const std::string& key, const std::string& value) override {
     // If key is not currently present, then update size
     if (!swap_has_impl(key)) {
@@ -48,17 +51,18 @@ class ProtobufSwap : public SwapBase<ProtobufSwap> {
   }
 
   const std::pair<bool, std::string> swap_get_impl(const std::string& key) override {
-//    if (key == "magic") {  // TODO
-//      std::cout << "=====DUMPING======================\n"; //NOLINT
-//      for (const auto& kv : recordio::ReaderRange<KeyValue>(m_file_name)) {//NOLINT
-//        std::cout << "valid[" << kv.valid() << "]\n";//NOLINT
-//        std::cout << "key[" << kv.key() << "]\n";//NOLINT
-//        std::cout << "value[" << kv.value() << "]\n";//NOLINT
-//      }
-//      std::cout << "=====DONE=========================\n";//NOLINT
-//    }
+    //    if (key == "magic") {  // TODO
+    //      std::cout << "=====DUMPING======================\n"; //NOLINT
+    //      for (const auto& kv : recordio::ReaderRange<KeyValue>(m_file_name))
+    //      {//NOLINT
+    //        std::cout << "valid[" << kv.valid() << "]\n";//NOLINT
+    //        std::cout << "key[" << kv.key() << "]\n";//NOLINT
+    //        std::cout << "value[" << kv.value() << "]\n";//NOLINT
+    //      }
+    //      std::cout << "=====DONE=========================\n";//NOLINT
+    //    }
 
-    auto valid        = false;
+    auto valid = false;
     std::string value;
 
     // Iterate through file and see if last element with correct key is valid
@@ -99,13 +103,15 @@ class ProtobufSwap : public SwapBase<ProtobufSwap> {
       writer.WriteProtocolMessage(kv);
       // Decrement count
       --m_current_size;
+      return true;
     }
 
+    // Key not valid
     return false;
   }
 
   size_t swap_size_impl() override {
-//    std::cout << "swap_size_impl[" << m_current_size << "]\n";  // TODO
+    //    std::cout << "swap_size_impl[" << m_current_size << "]\n";  // TODO
     return m_current_size;
   }
 

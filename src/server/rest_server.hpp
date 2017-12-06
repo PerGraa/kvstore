@@ -46,13 +46,14 @@ void start_rest_server() {
     return m_writer.size_response(m_store.size());
   });
 
-  // Only output warnings or worse
+  // Only dump warnings or worse to output
   app.loglevel(crow::LogLevel::Warning);
 
   // According to standard: hardware_concurrency() may return 0
   std::cout << "REST server starting at 0.0.0.0:" << port << '\n'
             << "Server is using " << std::max(1u, std::thread::hardware_concurrency())
             << " threads\n"
+            << "Server log level set to warning\n"
             << "Stop server with Ctrl+C\n";
 
   app.port(port).multithreaded().run();

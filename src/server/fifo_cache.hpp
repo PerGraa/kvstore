@@ -14,7 +14,7 @@ namespace kvstore {
 // the data structure.
 // Can be extended with a swap, defaults to the EmptySwap which puts
 // all input into the void.
-template <size_t MAX_SIZE, class SwapType = EmptySwap>
+template <size_t MAX_SIZE, typename SwapType = EmptySwap>
 class FIFOCache : public StoreBase<FIFOCache<MAX_SIZE, SwapType>>, public SwapType {
   // Allow our base class to call our private member functions
   friend class StoreBase<FIFOCache<MAX_SIZE, SwapType>>;

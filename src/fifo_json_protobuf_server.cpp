@@ -16,9 +16,9 @@ int main() {
   // The call below will not return in the normal case.
   // Kill server with Ctrl+C in terminal.
 
-  // Simulate there is room for 1000 bytes in the FIFO cache.
+  // Simulate there is room for 200 bytes in the FIFO cache.
   // Write JSON output to clients.
-  constexpr int max = 300;  // TODO(graa): -> 1000
+  constexpr int max = 200;
   std::cout << "Server: FIFO cache store with " << max << " bytes\n"
             << "Protobuf swap file used when cache runs full\n"
             << "JSON REST server output\n";

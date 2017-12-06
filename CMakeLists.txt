@@ -17,7 +17,8 @@ file(GLOB_RECURSE TEST_SOURCES  test/*.cpp)
 add_executable(unittest ${TEST_SOURCES})
 target_include_directories(unittest PRIVATE "src")
 target_include_directories(unittest PRIVATE "3rdparty")
-target_link_libraries(unittest pthread)
+target_include_directories(unittest PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries(unittest pthread proto recordio z ${PROTOBUF_LIBRARY})
 
 ## Let Clang go harder on kvstore itself
 SET (STRICT_BUILD_FLAGS "-Wpedantic -Wall -Wextra   -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op-parentheses -Wmissing-declarations -Wmissing-include-dirs -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wswitch-default -Wno-unused")
