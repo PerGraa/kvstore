@@ -19,7 +19,7 @@ int main() {
   // Write simple output to clients.
   constexpr int max = 100;
   std::cout << "Server: LRU cache store with " << max << " bytes\n"
-            << "JSON REST server output\n";
+            << "Simple REST server output\n";
   start_rest_server<LRUCache<max>, SimpleResponse>();
 
   return EXIT_SUCCESS;

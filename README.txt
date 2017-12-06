@@ -59,12 +59,12 @@ The client can and must be configured at command line as in the
 following example. The client will send randomized requests to the
 running server within these parameters.
 
-kvstore/build$ ./client 2 10 20 500
+kvstore/build$ ./client 2 20 200 50
 
 Number of threads: 2
-Number of keys in store: 10
-Messages to send per thread: 20
-Time to let thread sleep between each message: 500 (milliseconds)
+Number of keys in store: 20
+Messages to send per thread: 200
+Time to let thread sleep between each message: 50 (milliseconds)
 
 
 Manual test of server using curl

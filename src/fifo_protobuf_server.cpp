@@ -21,6 +21,7 @@ int main() {
   // Write simple output to clients.
   constexpr int max = 200;
   std::cout << "Server: FIFO cache store with " << max << " bytes\n"
+            << "Protobuf swap file used when cache runs full\n"
             << "Simple server output\n";
   start_rest_server<FIFOCache<max, ProtobufSwap>, SimpleResponse>();
 
