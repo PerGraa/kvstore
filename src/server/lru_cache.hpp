@@ -2,6 +2,7 @@
 #define LRU_CACHE_HPP
 
 #include "store.hpp"
+#include "swap.hpp"
 #include <algorithm>
 #include <vector>
 
@@ -11,43 +12,50 @@ namespace kvstore {
 // For simulation purposes, pretend that number of chars/bytes saved
 // in the cache is equal to the actual memory use by the data
 // structure.
-// TODO(graa): swappifize
-template <size_t MAX_SIZE>
-class LRUCache : public StoreBase<LRUCache<MAX_SIZE>> {
+// Can be extended with a swap, defaults to the EmptySwap which puts
+// all input into the void.
+template <size_t MAX_SIZE, typename SwapType = EmptySwap>
+class LRUCache : public StoreBase<LRUCache<MAX_SIZE, SwapType>>, public SwapType {
   // Allow our base class to call our private member functions
-  friend class StoreBase<LRUCache<MAX_SIZE>>;
+  friend class StoreBase<LRUCache<MAX_SIZE, SwapType>>;
 
  private:
   bool put_impl(const std::string &key, const std::string &value) override {
-    if (key.length() + value.length() > MAX_SIZE) {
-      // Do not bother if there will never be space for given key/value
-      return false;
-    }
-
-    // Remove from current position, if present
+    // Remove from current position in primary storage, if present
     delete_impl(key);
 
     // Update estimated memory use
     m_current_size += key.length();
     m_current_size += value.length();
 
+    // Remove from secondary storage, if present
+    SwapType::swap_delete(key);
+
     // Insert/move in back
     m_vector.emplace_back(key, value);
 
-    auto was_inserted = true;
-
     // Delete pairs from front until below/equal MAX_SIZE again
+    // Note that a key/value inserted in the code above may be swapped
+    // into secondary storage, which may be into the void.
     while (!m_vector.empty() && (m_current_size > MAX_SIZE)) {
-      if (m_vector.begin()->first == key) {
-        was_inserted = false;
-      }
-      delete_impl(m_vector.begin()->first);
+      auto front = m_vector.begin();
+
+      // Copy to secondary storage
+      SwapType::swap_save(front->first, front->second);
+      // Reduce estimated memory use
+      m_current_size -= front->first.length() + front->second.length();
+      // Delete from primary storage
+      m_vector.erase(front);
     }
 
-    return was_inserted;
+    // Did the put succeed in the end?
+    // This can be probably be optimized be keeping better track in
+    // the current function.
+    return (find_by_key(key) != m_vector.end()) || SwapType::swap_has(key);
   }
 
   const std::pair<bool, std::string> get_impl(const std::string &key) override {
+    // Try primary storage
     auto it = find_by_key(key);
 
     if (it != m_vector.end()) {
@@ -59,7 +67,8 @@ class LRUCache : public StoreBase<LRUCache<MAX_SIZE>> {
       return {true, value};
     }
 
-    return {false, key};
+    // No key/value in primary, try to find/delete it in swap
+    return SwapType::swap_get(key);
   }
 
   bool delete_impl(const std::string &key) override {
@@ -72,11 +81,11 @@ class LRUCache : public StoreBase<LRUCache<MAX_SIZE>> {
       return true;
     }
 
-    // No key/value in cache
-    return false;
+    // No key/value in cache, try to delete it in swap.
+    return SwapType::swap_delete(key);
   }
 
-  size_t size_impl() override { return m_vector.size(); }
+  size_t size_impl() override { return m_vector.size() + SwapType::swap_size(); }
 
  private:
   using vectorOfPair = std::vector<std::pair<std::string, std::string>>;
