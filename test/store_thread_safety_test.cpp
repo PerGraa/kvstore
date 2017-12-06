@@ -8,7 +8,7 @@
 using namespace kvstore;
 using std::to_string;
 
-TEST(thread, ten) {
+TEST(store_thread_safety, ten) {
   constexpr size_t MAX_THREADS = 10;
   constexpr size_t MAX_ENTRIES = 10000;
 
