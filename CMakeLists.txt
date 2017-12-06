@@ -36,33 +36,40 @@ set_target_properties(simple_server PROPERTIES COMPILE_FLAGS ${STRICT_BUILD_FLAG
 target_include_directories(simple_server PRIVATE "3rdparty")
 target_link_libraries(simple_server ${Boost_LIBRARIES})
 
+## LRU server
+file(GLOB_RECURSE LRU_SOURCES  src/lru_server.cpp src/server/*.[c|h]pp)
+add_executable(lru_server ${LRU_SOURCES})
+set_target_properties(lru_server PROPERTIES COMPILE_FLAGS ${STRICT_BUILD_FLAGS})
+target_include_directories(lru_server PRIVATE "3rdparty")
+target_link_libraries(lru_server ${Boost_LIBRARIES})
+
 ## FIFO/JSON server
-file(GLOB_RECURSE FIFO_SOURCES  src/fifo_json_server.cpp src/server/*.[c|h]pp)
-add_executable(fifo_json_server ${FIFO_SOURCES})
+file(GLOB_RECURSE FJ_SOURCES  src/fifo_json_server.cpp src/server/*.[c|h]pp)
+add_executable(fifo_json_server ${FJ_SOURCES})
 set_target_properties(fifo_json_server PROPERTIES COMPILE_FLAGS ${STRICT_BUILD_FLAGS})
 target_include_directories(fifo_json_server PRIVATE "3rdparty")
 target_link_libraries(fifo_json_server ${Boost_LIBRARIES})
 
-## LRU/JSON server
-file(GLOB_RECURSE LRU_SOURCES  src/lru_json_server.cpp src/server/*.[c|h]pp)
-add_executable(lru_json_server ${LRU_SOURCES})
-set_target_properties(lru_json_server PROPERTIES COMPILE_FLAGS ${STRICT_BUILD_FLAGS})
-target_include_directories(lru_json_server PRIVATE "3rdparty")
-target_link_libraries(lru_json_server ${Boost_LIBRARIES})
-
 ## protobuf
 add_subdirectory(proto)
 
-## FIFO/JSON/protobuf server
-file(GLOB_RECURSE FJP_SOURCES  src/fifo_json_protobuf_server.cpp src/server/*.[c|h]pp)
-add_executable(fifo_json_protobuf_server ${FJP_SOURCES})
-set_target_properties(fifo_json_protobuf_server PROPERTIES COMPILE_FLAGS ${STRICT_BUILD_FLAGS})
-target_include_directories(fifo_json_protobuf_server PRIVATE "3rdparty")
-target_include_directories(fifo_json_protobuf_server PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-target_link_libraries(fifo_json_protobuf_server ${Boost_LIBRARIES})
-target_link_libraries(fifo_json_protobuf_server proto recordio z ${PROTOBUF_LIBRARY})
+## FIFO/protobuf server
+file(GLOB_RECURSE FP_SOURCES  src/fifo_protobuf_server.cpp src/server/*.[c|h]pp)
+add_executable(fifo_protobuf_server ${FP_SOURCES})
+set_target_properties(fifo_protobuf_server PROPERTIES COMPILE_FLAGS ${STRICT_BUILD_FLAGS})
+target_include_directories(fifo_protobuf_server PRIVATE "3rdparty")
+target_include_directories(fifo_protobuf_server PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries(fifo_protobuf_server ${Boost_LIBRARIES})
+target_link_libraries(fifo_protobuf_server proto recordio z ${PROTOBUF_LIBRARY})
 
-#TODO More proto servers
+## LRU/JSON/protobuf server
+file(GLOB_RECURSE LJP_SOURCES  src/lru_json_protobuf_server.cpp src/server/*.[c|h]pp)
+add_executable(lru_json_protobuf_server ${LJP_SOURCES})
+set_target_properties(lru_json_protobuf_server PROPERTIES COMPILE_FLAGS ${STRICT_BUILD_FLAGS})
+target_include_directories(lru_json_protobuf_server PRIVATE "3rdparty")
+target_include_directories(lru_json_protobuf_server PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries(lru_json_protobuf_server ${Boost_LIBRARIES})
+target_link_libraries(lru_json_protobuf_server proto recordio z ${PROTOBUF_LIBRARY})
 
 ## Client
 file(GLOB_RECURSE CLIENT_SOURCES  src/client.cpp)
@@ -72,7 +79,7 @@ target_include_directories(client PRIVATE "3rdparty")
 target_link_libraries(client pthread)
 
 ## Collect for convenience
-file(GLOB_RECURSE KVSTORE_SOURCES ${SIMPLE_SOURCES} ${FIFO_SOURCES} ${LRU_SOURCES} ${FJP_SOURCES} ${CLIENT_SOURCES})
+file(GLOB_RECURSE KVSTORE_SOURCES ${SIMPLE_SOURCES} ${FJ_SOURCES} ${LRU_SOURCES} ${FP_SOURCES} ${LJP_SOURCES} ${CLIENT_SOURCES})
 
 ## cppcheck
 add_custom_target(

@@ -9,14 +9,13 @@
 int main() {
   using namespace kvstore;  // NOLINT
 
-  // Select cache type and response type at compile with template
-  // arguments.
+  // Select cache type, swap type and response type at compile time
+  // with template arguments.
 
   // The call below will not return in the normal case.
   // Kill server with Ctrl+C in terminal.
 
   // Full cache store and simple responses to client.
-  constexpr int max = 1000;
   std::cout << "Server: Full store\n"
             << "Simple REST server output\n";
   start_rest_server<Store, SimpleResponse>();

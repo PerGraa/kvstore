@@ -13,13 +13,15 @@
 
 namespace kvstore {
 
-// TODO(graa): really silly implementation
-// A protobuf swap. Uses file at disk.
-// Much work can be done on the algorithms and file data structure.
+// A protobuf swap.
+// It uses swap file at disk, the old file is deleted at start-up in
+// ctor.
+// The current implementation is silly, and much work can be done on
+// the file data structure and related algorithms.
 // Note: Data file is shared between servers, but that should be OK
 // since we can only run one server at a time.
 // Note: recordio::ReaderRange is an InputIterator, which means it
-// "only guarantee validity for single pass algorithms"
+// will "only guarantee validity for single pass algorithms"
 class ProtobufSwap : public SwapBase<ProtobufSwap> {
   // Allow our base class to call our private member functions
   friend class SwapBase<ProtobufSwap>;
@@ -51,17 +53,6 @@ class ProtobufSwap : public SwapBase<ProtobufSwap> {
   }
 
   const std::pair<bool, std::string> swap_get_impl(const std::string& key) override {
-    //    if (key == "magic") {  // TODO
-    //      std::cout << "=====DUMPING======================\n"; //NOLINT
-    //      for (const auto& kv : recordio::ReaderRange<KeyValue>(m_file_name))
-    //      {//NOLINT
-    //        std::cout << "valid[" << kv.valid() << "]\n";//NOLINT
-    //        std::cout << "key[" << kv.key() << "]\n";//NOLINT
-    //        std::cout << "value[" << kv.value() << "]\n";//NOLINT
-    //      }
-    //      std::cout << "=====DONE=========================\n";//NOLINT
-    //    }
-
     auto valid = false;
     std::string value;
 
@@ -110,12 +101,10 @@ class ProtobufSwap : public SwapBase<ProtobufSwap> {
     return false;
   }
 
-  size_t swap_size_impl() override {
-    //    std::cout << "swap_size_impl[" << m_current_size << "]\n";  // TODO
-    return m_current_size;
-  }
+  size_t swap_size_impl() override { return m_current_size; }
 
   // Hardcoded filename. Should be OK since we can only run one server at a time.
+  // Find this file in kvstore/build/ if normal out-of-source build procedure is used.
   const std::string m_file_name = "kvstore.protobuf.data";
   size_t m_current_size         = 0;
 };

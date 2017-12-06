@@ -36,13 +36,22 @@ To stop/kill server, press Ctrl+C in terminal.
 Server with complete cache, which writes simple output to clients.
 kvstore/build$ ./simple_server
 
-FIFO cache based server, which writes JSON output to clients.
+LRU cache based server without swap, which writes simple output to
+clients.
+kvstore/build$ ./lru_server
+
+FIFO cache based server without swap, which writes JSON output to
+clients.
 kvstore/build$ ./fifo_json_server
 
-LRU cache based server, which writes JSON output to clients.
-kvstore/build$ ./lru_json_server
+FIFO cache based server with protobuf swap file, which writes simple
+output to clients.
+kvstore/build$ ./fifo_protobuf_server
 
-// TODO More servers
+LRU cache based server with protobuf swap file, which writes JSON
+output to clients.
+kvstore/build$ ./lru_json_protobuf_server
+
 
 Run client
 ----------
