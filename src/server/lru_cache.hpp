@@ -11,7 +11,7 @@ namespace kvstore {
 // For simulation purposes, pretend that number of chars/bytes saved
 // in the cache is equal to the actual memory use by the data
 // structure.
-// TODO swappifize
+// TODO(graa): swappifize
 template <size_t MAX_SIZE>
 class LRUCache : public StoreBase<LRUCache<MAX_SIZE>> {
   // Allow our base class to call our private member functions

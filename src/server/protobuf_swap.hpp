@@ -1,10 +1,10 @@
 #ifndef PROTOBUF_SWAP_HPP
 #define PROTOBUF_SWAP_HPP
 
-#include <iterator>
-#include <string>
 #include "swap.hpp"
 #include "proto/keyvalue.pb.h"
+#include <iterator>
+#include <string>
 
 // Silence Clang compiler warnings
 #pragma clang diagnostic push
@@ -14,7 +14,7 @@
 
 namespace kvstore {
 
-// TODO really silly implementation
+// TODO(graa): really silly implementation
 // A protobuf swap. Uses file at disk.
 // Much work can be done on the algorithms and file data structure.
 // Note: Data file is shared between servers, but that should be OK
@@ -26,7 +26,7 @@ class ProtobufSwap : public SwapBase<ProtobufSwap> {
   friend class SwapBase<ProtobufSwap>;
 
  private:
-  // TODO Delete swap file in ctor
+  // TODO(graa): Delete swap file in ctor
 
   bool swap_save_impl(const std::string& key, const std::string& value) override {
     // If key is not currently present, then update size
@@ -48,18 +48,18 @@ class ProtobufSwap : public SwapBase<ProtobufSwap> {
   }
 
   const std::pair<bool, std::string> swap_get_impl(const std::string& key) override {
-    if (key == "magic") {  // TODO
-      std::cout << "=====DUMPING======================\n"; //NOLINT
-      for (const auto& kv : recordio::ReaderRange<KeyValue>(m_file_name)) {//NOLINT
-        std::cout << "valid[" << kv.valid() << "]\n";//NOLINT
-        std::cout << "key[" << kv.key() << "]\n";//NOLINT
-        std::cout << "value[" << kv.value() << "]\n";//NOLINT
-      }
-      std::cout << "=====DONE=========================\n";//NOLINT
-    }
+//    if (key == "magic") {  // TODO
+//      std::cout << "=====DUMPING======================\n"; //NOLINT
+//      for (const auto& kv : recordio::ReaderRange<KeyValue>(m_file_name)) {//NOLINT
+//        std::cout << "valid[" << kv.valid() << "]\n";//NOLINT
+//        std::cout << "key[" << kv.key() << "]\n";//NOLINT
+//        std::cout << "value[" << kv.value() << "]\n";//NOLINT
+//      }
+//      std::cout << "=====DONE=========================\n";//NOLINT
+//    }
 
     auto valid        = false;
-    std::string value = "";
+    std::string value;
 
     // Iterate through file and see if last element with correct key is valid
     for (const auto& kv : recordio::ReaderRange<KeyValue>(m_file_name)) {
@@ -105,7 +105,7 @@ class ProtobufSwap : public SwapBase<ProtobufSwap> {
   }
 
   size_t swap_size_impl() override {
-    std::cout << "swap_size_impl[" << m_current_size << "]\n";  // TODO
+//    std::cout << "swap_size_impl[" << m_current_size << "]\n";  // TODO
     return m_current_size;
   }
 
